@@ -1,3 +1,10 @@
+//     What is this module?     //
+//------------------------------//
+// This is the Edge interface   //
+// for a graph. This is NOT     //
+// polymorphic (sad.) so it's   //
+// really just for this project.//
+//////////////////////////////////
 #ifndef EDGE_H
 #define EDGE_H
 

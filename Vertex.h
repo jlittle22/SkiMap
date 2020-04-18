@@ -1,3 +1,9 @@
+//     What is this module?     //
+//------------------------------//
+// This is our Vertex interface //
+// for a graph.                 //
+////////////////////////////////// 
+
 #ifndef VERTEX_H
 #define VERTEX_H
 

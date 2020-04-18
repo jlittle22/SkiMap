@@ -1,3 +1,11 @@
+//     What is this module?     //
+//------------------------------//
+// This a List interface.       //
+// It's polymorphic so you can  //
+// store whatever you want!     //  
+// Cool.                        //
+//////////////////////////////////
+
 #ifndef LINKEDLIST_H
 #define LINKEDLIST_H
 
