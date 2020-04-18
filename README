@@ -92,7 +92,7 @@ Ski Maps (SkiMap.h/SkiMap.c) *NEEDS WORK:
 
 
 --STRUCTURE--
-					Ski Map       <- Highest Level. Represents Graph structure.
+		    Ski Map       <- Highest Level. Represents Graph structure.
                        |     
                  Vertices List    
                    / / | \ \ 
