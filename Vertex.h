@@ -26,13 +26,10 @@
 #define VERT_CLASS_MSB 2
 #define DISC_FLAG (VERT_CLASS_MSB+1)
 
-// edge shit here
-
-
 struct Vertex{
-	char vertexName[VERT_NAME_CHAR_COUNT]; // Intersection name... replace with ID number?
-	uint8_t data; // just the discovered bit atm :/ maybe classifications in future?
-	List edges; // list of edges  
+	char vertexName[VERT_NAME_CHAR_COUNT];
+	uint8_t data; 
+	List edges;   
 }; 
 
 #define VERTEX_SIZE sizeof(struct Vertex)
