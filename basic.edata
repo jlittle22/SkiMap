@@ -1,0 +1,11 @@
+Lift top1 CharLift 7
+lift2 top1 TheQuad 7
+top1 inter1 TrueGrit 3 6
+inter1 Lift ValleyRun 0 5
+inter1 Lift Stillness 1
+top1 inter2 WhiteCaps 1
+inter2 lift2 TheChute 2
+inter2 inter3 Tecumseh 1
+inter2 inter3 Sels 2
+inter3 inter4 JakesTrail 3
+inter4 lift2 Periphery 1
