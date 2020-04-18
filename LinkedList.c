@@ -1,7 +1,6 @@
 #include "LinkedList.h"
 #include "Vertex.h"
 
-//Testy test test :)
 static void indexRange(char error[], List obj, int index);
 
 LinkedList LinkedList_new(){
