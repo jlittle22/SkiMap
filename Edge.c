@@ -21,6 +21,7 @@ Vertex Edge_getDest(Edge obj){
 }
 
 static uint8_t initDiffRatings(uint8_t flags[], int numFlags){
+	assert(flags);
 	uint8_t result = 0x0;
 	for (uint32_t i = 0; i < (uint32_t)numFlags; i++){
 		result = flag(result, flags[i]);
@@ -29,6 +30,7 @@ static uint8_t initDiffRatings(uint8_t flags[], int numFlags){
 }
 
 bool Edge_is(Edge obj, int type){
+	assert(obj);
 	return checkFlag(obj->diffRating, type);
 }
 

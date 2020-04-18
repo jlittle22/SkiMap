@@ -59,6 +59,7 @@ void List_free(List removeMe){
 }
 
 Node* List_getItem(List obj, int index){
+	assert(obj);
 	indexRange("ERROR: at List_getItem :: index out of range",obj, index);
 	Node* curr = obj->list->front; 
 	int count = 0;
@@ -72,11 +73,13 @@ Node* List_getItem(List obj, int index){
 }
 
 int List_numItems(List obj){
+	assert(obj);
 	return obj->numElems;
 }
 
 
 static void indexRange(char error[], List obj, int index){
+	assert(obj);
 	if (index >= obj->numElems || index < 0){
 		fprintf(stderr, "%s: %d.\n", error, index);
 		exit(1);

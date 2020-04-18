@@ -44,6 +44,7 @@ static void assignVertName(Vertex obj, char array[]){
 
 void Vertex_addEdge(Vertex obj, void * newEdge){
 	assert(obj);
+	assert(newEdge);
 	List_insert(obj->edges, newEdge);
 }
 
