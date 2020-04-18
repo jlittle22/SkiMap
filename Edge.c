@@ -1,3 +1,4 @@
+//I WANT THIS TO SHOW UP IN GITHUB :((
 #include "Edge.h"
 
 static uint8_t flag(uint8_t word, int bitLocation);
