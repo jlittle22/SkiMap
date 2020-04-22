@@ -7,9 +7,12 @@ static void assignVertName(Vertex obj, char array[]);
 static uint8_t flag(uint8_t word, int bitLocation);
 static uint8_t unflag(uint8_t word, int bitLocation);
 static void checkRatingRange(uint8_t givenVal);
+static void checkDistanceRange(uint8_t givenVal);
 static uint8_t setDiffRate(uint8_t word, uint8_t rating);
 static bool checkFlag(uint8_t word, int bitLocation);
 static uint8_t getDiffRate(uint8_t word);
+static uint8_t setDistance(uint8_t word, uint8_t distance);
+static uint8_t getDistance(uint8_t word);
 /*                        */
 
 
@@ -81,7 +84,24 @@ void Vertex_setDiscovered(Vertex obj, bool value){
 		obj->data = unflag(obj->data, DISC_FLAG);
 	}
 }
+uint8_t Vertex_setDistance(Vertex obj, uint8_t distance){
+	assert(obj);
+	return setDistance(obj->data, distance);
+}
 
+uint8_t Vertex_getDistance(Vertex obj){
+	assert(obj);
+	return getDistance(obj->data);
+}
+
+bool Vertex_isInfinite(Vertex obj){
+	if (Vertex_getDistance(obj) == INFINITE_DIST){
+		return true;
+	}
+	else{
+		return false;
+	}
+}
 
 
 
@@ -95,7 +115,8 @@ static uint8_t flag(uint8_t word, int bitLocation){
 }
 
 static uint8_t unflag(uint8_t word, int bitLocation){
-	uint8_t mask = (0x1 << (bitLocation + 1)) -1;
+	uint8_t mask = ONE_BIT_AT(bitLocation);
+	mask = ~mask;
 	return mask & word;
 }
 
@@ -106,6 +127,22 @@ static void checkRatingRange(uint8_t givenVal){
 		exit(1);
 	}
 }
+
+static void checkDistanceRange(uint8_t givenVal){
+	uint8_t max = INFINITE_DIST;
+	if (givenVal > max){
+		fprintf(stderr, "ERROR: distance {%u} is out of range.\n", givenVal);
+		exit(1);
+	}
+}
+static uint8_t setDistance(uint8_t word, uint8_t distance){
+	checkDistanceRange(distance);
+	uint8_t clearMask = ONE_BIT_AT(DISTANCE_LSB)-1;
+	clearMask = clearMask & word;
+	distance = distance << DISTANCE_LSB;
+    return (distance | clearMask);          
+}
+
 
 static uint8_t setDiffRate(uint8_t word, uint8_t rating){
 	checkRatingRange(rating);
@@ -123,4 +160,9 @@ static uint8_t getDiffRate(uint8_t word){
 	return (word & mask);
 }
 
-
+static uint8_t getDistance(uint8_t word){
+	uint8_t mask = (0x0-1); 
+	mask = mask >> DISTANCE_LSB;
+	mask = mask << DISTANCE_LSB;
+	return ((word & mask) >> DISTANCE_LSB);
+}

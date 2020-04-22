@@ -29,13 +29,16 @@
 ///////////////////////////
 
 /*    Vertex    */
-#define VERT_CLASS_MSB 2
+#define VERT_CLASS_MSB 1
 #define DISC_FLAG (VERT_CLASS_MSB+1)
+#define DISTANCE_LSB (DISC_FLAG+1)
+#define INFINITE_DIST ((uint8_t)((0x0-1)>>(DISTANCE_LSB)))
 
 struct Vertex{
 	char vertexName[VERT_NAME_CHAR_COUNT];
 	uint8_t data; 
 	List edges;   
+	Vertex parent;
 }; 
 
 #define VERTEX_SIZE sizeof(struct Vertex)
@@ -49,6 +52,9 @@ int Vertex_numEdges(Vertex obj);
 uint8_t Vertex_getClass(Vertex obj);
 bool Vertex_isDiscovered(Vertex obj);
 void Vertex_setDiscovered(Vertex obj, bool value);
+uint8_t Vertex_setDistance(Vertex obj, uint8_t distance);
+uint8_t Vertex_getDistance(Vertex obj);
+bool Vertex_isInfinite(Vertex obj);
 
 
 

@@ -148,3 +148,6 @@ static unsigned randomNum(unsigned upperBound){
 	return (rand() % upperBound); 
 }
 
+// Bellman-Ford Best Path:
+//  * build relax edge function:
+//    - check if source.dist + edge.weight < destination.distance 
