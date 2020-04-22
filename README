@@ -114,7 +114,7 @@ Ski Maps (SkiMap.h/SkiMap.c) *NEEDS WORK:
 	See "basic.vdata" for example of input VERTEX DATA to the SkiMap ojbject.
 
 	(!)IMPORTANT NOTES: 
-		*Make sure there is NOT a black line at the end of your inputs file --> 
+		*Make sure there is NOT a blank line at the end of your inputs file --> 
 		 leads to a bug that I havent fixed where edges vertices are entered in 
 		 twice/will probably trigger an assertion somewhere... I don't really 
 		 know. 
