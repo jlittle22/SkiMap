@@ -7,9 +7,11 @@
 ***********************************
 
 --INTRODUCTION--
-Abstract Goal:
+Abstract Goal: 
+	Read in graph data representing a ski resort. Accept user preferences
+	and report a random path up and back down the mountain that meets as 
+	many of their preferences as possible. 
 	
-
 --OBJECTS--
 
 Edges (Edge.h/Edge.c):
