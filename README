@@ -40,12 +40,12 @@ Vertices (Vertex.h/Vertex.c):
 	contain a single byte for data storage inside which is a flag marking if 
 	the Vertex has been discovered during traversal and the Vertex's 
 	classification. A Vertex can be classified as either: an OFFLOAD point, 
-	and ONLOAD point, or an INTERSECTION. The distinction is important for 
-    finding bottom-of-mountain -> top-of-mountain -> bottom-of-mountain paths.
-    NOTE: while the discovered property is stored as a single bit flag, the 
-    Vertex classification is stored as the value of the 2 least significant 
-    bits in the data byte, NOT as flags. Finally, a Vertex contains a List of
-    all its Edges. 
+	and ONLOAD point, or an INTERSECTION. The distinction is important for
+	finding bottom-of-mountain -> top-of-mountain -> bottom-of-mountain paths.
+	NOTE: while the discovered property is stored as a single bit flag, the 
+	Vertex classification is stored as the value of the 2 least significant 
+	bits in the data byte, NOT as flags. Finally, a Vertex contains a List of
+	all its Edges. 
 
 	struct Vertex{
 		char vertexName[VERT_NAME_CHAR_COUNT];
