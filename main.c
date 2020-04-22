@@ -37,10 +37,7 @@ void path(Vertex start){
 int main(){
 	srand(time(NULL));
 	SkiMap test = SkiMap_new("TEstMtn", "basic.vdata", "basic.edata");
-	SkiMap_randomPathDown(test);
-	fprintf(stderr, "P1\n");
-	SkiMap_randomPathDown(test);
-	fprintf(stderr, "P2\n");
+	SkiMap_free(test);
 
 	// int size = List_numItems(test->allVertices);
 	// for(int i = 0; i < size; i++){

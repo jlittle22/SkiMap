@@ -4,6 +4,7 @@ static void assignMtnName(SkiMap obj, char array[]);
 static unsigned randomNum(unsigned upperBound);
 static void randomPathDown_Helper(Vertex current, bool first);
 static bool visitedAll(int arr[], int size);
+static void freeAllVertices(List remove);
 
 void SkiMap_loadVertices(SkiMap obj, char vertFile[]){
 	FILE* verts = fopen(vertFile, "r");	
@@ -17,6 +18,7 @@ void SkiMap_loadVertices(SkiMap obj, char vertFile[]){
     		List_insert(obj->startPoints, new);
     	}
 	}
+	fclose(verts);
 }
 
 static void loadTrail(SkiMap obj, char* line){
@@ -59,6 +61,7 @@ void SkiMap_loadTrails(SkiMap obj, char trailFile[]){
 		fgets(line, MAX_EDGE_LINE_SIZE, trails);
 		loadTrail(obj, line);
 	}
+	fclose(trails);
 }
 
 SkiMap SkiMap_new(char name[], char vertFile[], char trailFile[]){
@@ -69,6 +72,26 @@ SkiMap SkiMap_new(char name[], char vertFile[], char trailFile[]){
     SkiMap_loadVertices(obj, vertFile);
     SkiMap_loadTrails(obj, trailFile);
     return obj;
+}
+
+void SkiMap_free(SkiMap obj){
+	assert(obj);
+	freeAllVertices(obj->allVertices);
+	//free start points memory
+	List_partialFree(obj->startPoints);
+	free(obj);
+}
+static void freeAllVertices(List remove){
+	Node* current = remove->list->front; 
+	Node* temp = NULL;
+	while (current != NULL){
+		temp = current->next; 
+		Vertex_free((Vertex)current->data);
+		free(current);
+		current = temp; 
+	}
+	free(remove->list);
+	free(remove);
 }
 
 Vertex SkiMap_searchVertex(SkiMap obj, char name[]){

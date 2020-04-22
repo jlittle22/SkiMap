@@ -27,10 +27,12 @@ struct SkiMap{
 typedef struct SkiMap* SkiMap;
 
 SkiMap SkiMap_new(char name[], char vertFile[], char trailFile[]);
+void SkiMap_free(SkiMap obj);
 void SkiMap_loadVertices(SkiMap obj, char vertFile[]);
 void SkiMap_loadTrails(SkiMap obj, char trailFile[]);
 Vertex SkiMap_searchVertex(SkiMap obj, char name[]);
 void SkiMap_randomPathDown(SkiMap obj);
+
 
 void SkiMap_driver();
 

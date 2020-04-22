@@ -42,6 +42,7 @@ typedef struct LinkedListClass* List;
 
 LinkedList LinkedList_new();
 void LinkedList_free(LinkedList list);
+void List_partialFree(List list);
 List List_new();
 void List_insert(List list, void* data);
 void List_print(LinkedList);

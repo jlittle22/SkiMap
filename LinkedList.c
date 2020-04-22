@@ -16,9 +16,27 @@ void LinkedList_free(LinkedList list){
 	Node* temp = NULL;
 	while (current != NULL){
 		temp = current->next; 
+		if(current->data != NULL){
+			free(current->data);
+		}
 		free(current);
 		current = temp; 
 	}
+}
+
+void List_partialFree(List obj){
+	assert(obj);
+	LinkedList objList = obj->list;
+	assert(objList);
+	Node* current = objList->front; 
+	Node* temp = NULL;
+	while (current != NULL){
+		temp = current->next; 
+		free(current);
+		current = temp; 
+	}
+	free(objList);
+	free(obj);
 }
 
 void List_insert(List obj, void* newData){
@@ -47,10 +65,12 @@ List List_new(){
 	List new = (List)malloc(LIST_SIZE);
 	nullCheck("ERROR: at Malloc in List_new()", new);	
 	new->list = (LinkedList)LinkedList_new();
+	new->numElems = 0;
 	return new;
 }
 
 void List_free(List removeMe){
+	assert(removeMe);
 	assert(removeMe);
 	LinkedList_free(removeMe->list);
 	free(removeMe->list);
