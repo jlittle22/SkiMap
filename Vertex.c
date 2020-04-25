@@ -4,24 +4,26 @@
 static void assignVertName(Vertex obj, char array[]);
 
 /* Bitpacking Mini-Module */ 
-static uint8_t flag(uint8_t word, int bitLocation);
-static uint8_t unflag(uint8_t word, int bitLocation);
-static void checkRatingRange(uint8_t givenVal);
-static void checkDistanceRange(uint8_t givenVal);
-static uint8_t setDiffRate(uint8_t word, uint8_t rating);
-static bool checkFlag(uint8_t word, int bitLocation);
-static uint8_t getDiffRate(uint8_t word);
-static uint8_t setDistance(uint8_t word, uint8_t distance);
-static uint8_t getDistance(uint8_t word);
+static uint32_t flag(uint32_t word, int bitLocation);
+static uint32_t unflag(uint32_t word, int bitLocation);
+static void checkRatingRange(uint32_t givenVal);
+static void checkDistanceRange(uint32_t givenVal);
+static uint32_t setDiffRate(uint32_t word, uint32_t rating);
+static bool checkFlag(uint32_t word, int bitLocation);
+static uint32_t getDiffRate(uint32_t word);
+static uint32_t setDistance(uint32_t word, uint32_t distance);
+static uint32_t getDistance(uint32_t word);
 /*                        */
 
 
-Vertex Vertex_new(char name[], uint8_t classValue){
+Vertex Vertex_new(char name[], uint32_t classValue){
 	Vertex new = malloc(VERTEX_SIZE);
 	nullCheck("ERROR: at Malloc in Vertex_new.", new);
 	assignVertName(new, name);
 	new->data = setDiffRate(new->data, classValue);
+	Vertex_setDistance(new, INFINITE_DIST);
 	new->edges = List_new();
+	new->toParent = NULL;
 	return new;
 }
 
@@ -65,7 +67,7 @@ int Vertex_numEdges(Vertex obj){
 	return List_numItems(obj->edges);
 }
 
-uint8_t Vertex_getClass(Vertex obj){
+uint32_t Vertex_getClass(Vertex obj){
 	assert(obj);
 	return getDiffRate(obj->data);
 }
@@ -84,12 +86,12 @@ void Vertex_setDiscovered(Vertex obj, bool value){
 		obj->data = unflag(obj->data, DISC_FLAG);
 	}
 }
-uint8_t Vertex_setDistance(Vertex obj, uint8_t distance){
+void Vertex_setDistance(Vertex obj, uint32_t distance){
 	assert(obj);
-	return setDistance(obj->data, distance);
+	obj->data = setDistance(obj->data, distance);
 }
 
-uint8_t Vertex_getDistance(Vertex obj){
+uint32_t Vertex_getDistance(Vertex obj){
 	assert(obj);
 	return getDistance(obj->data);
 }
@@ -109,59 +111,59 @@ bool Vertex_isInfinite(Vertex obj){
 //        BITPACK        //
 ///////////////////////////
 
-static uint8_t flag(uint8_t word, int bitLocation){
-	uint8_t mask = ONE_BIT_AT(bitLocation);
+static uint32_t flag(uint32_t word, int bitLocation){
+	uint32_t mask = ONE_BIT_AT(bitLocation);
 	return mask | word;
 }
 
-static uint8_t unflag(uint8_t word, int bitLocation){
-	uint8_t mask = ONE_BIT_AT(bitLocation);
+static uint32_t unflag(uint32_t word, int bitLocation){
+	uint32_t mask = ONE_BIT_AT(bitLocation);
 	mask = ~mask;
 	return mask & word;
 }
 
-static void checkRatingRange(uint8_t givenVal){
-	uint8_t max = ONE_BIT_AT((VERT_CLASS_MSB+1)) - 1;
+static void checkRatingRange(uint32_t givenVal){
+	uint32_t max = ONE_BIT_AT((VERT_CLASS_MSB+1)) - 1;
 	if (givenVal > max){
 		fprintf(stderr, "ERROR: difficulty rating {%u} is out of range.\n", givenVal);
 		exit(1);
 	}
 }
 
-static void checkDistanceRange(uint8_t givenVal){
-	uint8_t max = INFINITE_DIST;
+static void checkDistanceRange(uint32_t givenVal){
+	uint32_t max = INFINITE_DIST;
 	if (givenVal > max){
 		fprintf(stderr, "ERROR: distance {%u} is out of range.\n", givenVal);
 		exit(1);
 	}
 }
-static uint8_t setDistance(uint8_t word, uint8_t distance){
+static uint32_t setDistance(uint32_t word, uint32_t distance){
 	checkDistanceRange(distance);
-	uint8_t clearMask = ONE_BIT_AT(DISTANCE_LSB)-1;
+	uint32_t clearMask = ONE_BIT_AT(DISTANCE_LSB)-1;
 	clearMask = clearMask & word;
 	distance = distance << DISTANCE_LSB;
     return (distance | clearMask);          
 }
 
 
-static uint8_t setDiffRate(uint8_t word, uint8_t rating){
+static uint32_t setDiffRate(uint32_t word, uint32_t rating){
 	checkRatingRange(rating);
-	uint8_t mask = ~(ONE_BIT_AT((VERT_CLASS_MSB+1)) - 1); 
-	uint8_t result = (mask & word) | rating; 
+	uint32_t mask = ~(ONE_BIT_AT((VERT_CLASS_MSB+1)) - 1); 
+	uint32_t result = (mask & word) | rating; 
 	return result;
 }
 
-static bool checkFlag(uint8_t word, int bitLocation){
+static bool checkFlag(uint32_t word, int bitLocation){
 	return (word >> bitLocation);
 }
 
-static uint8_t getDiffRate(uint8_t word){
-	uint8_t mask = ONE_BIT_AT((VERT_CLASS_MSB+1))-1;
+static uint32_t getDiffRate(uint32_t word){
+	uint32_t mask = ONE_BIT_AT((VERT_CLASS_MSB+1))-1;
 	return (word & mask);
 }
 
-static uint8_t getDistance(uint8_t word){
-	uint8_t mask = (0x0-1); 
+static uint32_t getDistance(uint32_t word){
+	uint32_t mask = (0x0-1); 
 	mask = mask >> DISTANCE_LSB;
 	mask = mask << DISTANCE_LSB;
 	return ((word & mask) >> DISTANCE_LSB);

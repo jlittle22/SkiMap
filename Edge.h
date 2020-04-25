@@ -39,10 +39,11 @@ typedef struct Vertex* Vertex;
 struct Edge{
 	char edgeName[EDGE_NAME_CHAR_COUNT];
     uint8_t diffRating;
-    Vertex destination;  
+    Vertex destination;
+    Vertex source;  
 };
 
-Edge Edge_new(char name[], uint8_t array[], int numFlags, Vertex dest);
+Edge Edge_new(char name[], uint8_t array[], int numFlags, Vertex dest, Vertex src);
 Vertex Edge_getDest(Edge obj);
 ///////////////
 // Edge Bits //

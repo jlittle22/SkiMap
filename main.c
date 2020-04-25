@@ -37,6 +37,12 @@ void path(Vertex start){
 int main(){
 	srand(time(NULL));
 	SkiMap test = SkiMap_new("TEstMtn", "basic.vdata", "basic.edata");
+	List_print(test->allVertices->list);
+	uint8_t userP = 1;
+	Vertex src = (Vertex)(List_getItem(test->startPoints, 0)->data);
+	SkiMap_bellmanFord(test, src, userP);
+	SkiMap_checkBFResults(test);
+
 	SkiMap_free(test);
 
 	// int size = List_numItems(test->allVertices);

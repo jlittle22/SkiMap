@@ -5,13 +5,14 @@ static bool checkFlag(uint8_t word, int bitLocation);
 static void assignEdgeName(Edge obj, char array[]);
 static uint8_t initDiffRatings(uint8_t flags[], int length);
 
-Edge Edge_new(char name[], uint8_t flags[], int numFlags, Vertex dest){
+Edge Edge_new(char name[], uint8_t flags[], int numFlags, Vertex dest, Vertex src){
 	nullCheck("ERROR: Vertex passed to Edge_new is NULL", dest);
 	Edge new = malloc(EDGE_SIZE); 
 	nullCheck("ERROR: at Malloc in Edge_new", new);
 	assignEdgeName(new, name);
 	new->destination = dest;
 	new->diffRating = initDiffRatings(flags, numFlags);
+	new->source = src;
 	return new;
 }
 

@@ -7,4 +7,9 @@ void nullCheck(char error[], void* ptr){
 	}
 }
 
-
+void checkRange(char error[], unsigned index, unsigned max){
+	if (index > max){
+		fprintf(stderr, "%s\n", error);
+		exit(1);
+	}
+}

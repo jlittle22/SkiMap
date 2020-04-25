@@ -11,6 +11,6 @@
 #include <stdio.h>
 
 void nullCheck(char error[], void* ptr);
-
+void checkRange(char error[], unsigned index, unsigned max);
 
 #endif
