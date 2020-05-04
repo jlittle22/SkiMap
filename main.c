@@ -1,4 +1,5 @@
 #include "SkiMap.h"
+#include "MinHeap.h"
 
 void path(Vertex start){
 	if (start == NULL){
@@ -40,9 +41,24 @@ int main(){
 	List_print(test->allVertices->list);
 	uint8_t userP = 1;
 	Vertex src = (Vertex)(List_getItem(test->startPoints, 0)->data);
+
 	SkiMap_bellmanFord(test, src, userP);
 	SkiMap_checkBFResults(test);
 
+
+	MinHeap heap = MinHeap_new();
+	int count = 0;
+	while (count < 100){
+		Vertex test1 = Vertex_new("Top", 0);
+		Vertex_setDistance(test1, (100 - count));
+		MinHeap_insert(heap, test1);
+		count++;
+	}
+	fprintf(stderr, "Cap: %u NumElems: %u\n", heap->capacity, heap->numElems);
+	for(int i = 0; i < 100; i++){
+		fprintf(stderr, "TOP Val: %u\n", Vertex_getDistance(MinHeap_extractTop(heap)));
+	}
+    MinHeap_free(heap);
 	SkiMap_free(test);
 
 	// int size = List_numItems(test->allVertices);

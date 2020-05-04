@@ -20,7 +20,7 @@ all: SkiMap
 %.o: %.c $(INCLUDES)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-SkiMap: main.o LinkedList.o Edge.o Vertex.o Errors.o SkiMap.o
+SkiMap: main.o LinkedList.o Edge.o Vertex.o Errors.o SkiMap.o MinHeap.o
 	$(CC) $(LDFLAGS) $^ -o $@ $(LDLIBS)
 
 
