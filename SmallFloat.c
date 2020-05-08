@@ -1,8 +1,18 @@
 #include "SmallFloat.h"
 
+static int8_t getFloatExp(uint32_t input);
+static uint32_t getFloatMantissa(uint32_t input); 
+static uint32_t getSFMantissa(uint32_t input);
+static int8_t getSFExp(uint32_t input); 
+static void setSmallMant(SmallFloat obj, uint32_t mant);
+static void setSmallExp(SmallFloat obj, int8_t exp); 
+static float setFloatExp(uint32_t input, int8_t exp); 
+static float setFloatMantissa(uint32_t input, uint32_t mantissa);
+
 SmallFloat SmallFloat_new(){
 	SmallFloat new = (SmallFloat) malloc(FLOAT_SIZE);
 	nullCheck("ERROR:: at SmallFloat_new. Malloc failed.", new);
+	new->data = (uint32_t)0x0;
 	return new;
 }
 
@@ -11,19 +21,87 @@ void SmallFloat_free(SmallFloat obj){
 	free(obj);
 }
 
-uint8_t getExp(float in){
+SmallFloat SmallFloat_FtoSF(float input){
+	SmallFloat new = SmallFloat_new();
+	Convert out;
+	out.value = input;
+	uint8_t exponent = getFloatExp(out.bits);
+	uint32_t mant = getFloatMantissa(out.bits);
+	setSmallExp(new, exponent);
+	setSmallMant(new, mant);
+	return new;
+}
 
-	Convert input;
-	input.value = in;
-	//shift 23
-	//clear 9th bit
-	//done!
-	fprintf(stderr, "OG: %f\n", input.value);
-	uint32_t temp = (input.bits >> STD_EXP_LSB);
-	fprintf(stderr, "Temp: %u\n", temp);
+float SmallFloat_SFtoF(SmallFloat obj){
+	nullCheck("ERROR:: at SmallFloat_SFtoF. Obj is NULL.", obj);
+	uint32_t mant = getSFMantissa(obj->data);
+	int8_t exp = getSFExp(obj->data);
+	float value = 0;
+	value = setFloatExp(value, exp);
+	value = setFloatMantissa(value, mant);
+	Convert toFloat;
+	toFloat.bits = value;
+	SmallFloat_free(obj);
+	fprintf(stderr, "\nResult Hex    : %x\n", toFloat.bits);
+	return toFloat.value;
+}
+
+static void setSmallExp(SmallFloat obj, int8_t exp){
+	nullCheck("ERROR:: at setSmallExp. Obj is NULL.", obj);
+	checkSignedRange("ERROR:: at setSmallExp. Exp is out of range.", exp, BIAS, (-1*BIAS));
+	exp = exp + BIAS;
+	uint32_t mask = (uint32_t)exp; 
+	mask = mask << EXP_LSB;
+	obj->data = obj->data | mask;
+}
+
+static void setSmallMant(SmallFloat obj, uint32_t mant){
+	uint8_t shift = MANTISSA_MSB - STD_EXP_LSB + 1;
+	uint32_t mask = mant << shift;
+	obj->data = obj->data | mask;
+}
+
+static int8_t getFloatExp(uint32_t input){
+	uint32_t temp = (input >> STD_EXP_LSB);
 	uint32_t mask = (ONE_AT((STD_SIGN - STD_EXP_LSB)) - 1);
-	fprintf(stderr, "Mask: %u\n", mask);
 	temp = temp & mask;
-	fprintf(stderr, "Added: %u\n", temp);
-	return ((uint8_t)temp - STD_BIAS);
+	return ((int8_t)temp - STD_BIAS);
+}
+
+static uint32_t getFloatMantissa(uint32_t input){
+	uint32_t shift = (STD_SIZE - STD_MANT_WIDTH);
+	uint32_t temp = input << shift;
+	temp = temp >> shift;
+	return temp;
+}
+
+static uint32_t getSFMantissa(uint32_t input){
+	uint32_t mask = (ONE_AT((MANTISSA_MSB+1)) - 1);
+	mask = mask & input;
+	mask = mask >> ((MANTISSA_WIDTH)-(STD_MANT_WIDTH));
+	return mask;
+}
+
+static int8_t getSFExp(uint32_t input){
+	uint32_t mask = (ONE_AT(EXP_BITS)-1);
+	mask = mask << EXP_LSB;
+	mask = mask & input;
+	mask = mask >> EXP_LSB;
+	int8_t done = (int8_t)mask;
+	done -= BIAS;
+	return done;
+}
+
+static float setFloatExp(uint32_t input, int8_t exp){
+	checkSignedRange("ERROR:: at setFloatExp. Exp is outside range.", exp, STD_BIAS, (-1*STD_BIAS));
+   	uint32_t newExp = (uint32_t)exp;
+	newExp = newExp + STD_BIAS;
+	uint32_t mask = newExp << STD_EXP_LSB;
+	input = mask | input;
+	return input;
+}
+
+static float setFloatMantissa(uint32_t input, uint32_t mantissa){
+	input = input | mantissa;
+	return input;
 }

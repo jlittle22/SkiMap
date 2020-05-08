@@ -13,3 +13,10 @@ void checkRange(char error[], unsigned index, unsigned max){
 		exit(1);
 	}
 }
+
+void checkSignedRange(char error[], int index, int max, int min){
+	if ((index > max) || (index < min)){
+		fprintf(stderr, "%s\a\n", error);
+		exit(1);
+	}
+}

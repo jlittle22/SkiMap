@@ -37,8 +37,14 @@ void path(Vertex start){
 
 
 int main(){
-	float input = 8.0;
-	fprintf(stderr, "%u\n", getExp(input));
+	Convert input;
+	input.value = 10.3234329909809804;
+
+	fprintf(stderr, "Original Hex  : %x\n", input.bits);
+	fprintf(stderr, "Original Float: %f\n", input.value);
+	SmallFloat floa = SmallFloat_FtoSF(input.value);
+	float result = SmallFloat_SFtoF(floa);
+	fprintf(stderr, "Result Float  : %f\n", result);
 
 	return 0;
 
