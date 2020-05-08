@@ -1,5 +1,6 @@
 #include "SkiMap.h"
 #include "MinHeap.h"
+#include "SmallFloat.h"
 
 void path(Vertex start){
 	if (start == NULL){
@@ -36,6 +37,11 @@ void path(Vertex start){
 
 
 int main(){
+	float input = 8.0;
+	fprintf(stderr, "%u\n", getExp(input));
+
+	return 0;
+
 	srand(time(NULL));
 	SkiMap test = SkiMap_new("TEstMtn", "basic.vdata", "basic.edata");
 	List_print(test->allVertices->list);
