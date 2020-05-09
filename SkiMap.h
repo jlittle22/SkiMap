@@ -38,7 +38,6 @@ float SkiMap_evaluateEdge(Edge target, uint8_t userPreferences);
 void SkiMap_relaxEdge(Vertex source, Edge target, uint8_t userPreferences);
 void SkiMap_bellmanFord(SkiMap obj, Vertex source, uint8_t userPreferences);
 void SkiMap_checkBFResults(SkiMap obj);
-
 void SkiMap_driver();
 
 #endif

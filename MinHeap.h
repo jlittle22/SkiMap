@@ -16,8 +16,6 @@ struct MinHeap{
 
 typedef struct MinHeap* MinHeap;
 
-// Member Functions
-
 MinHeap MinHeap_new();
 void MinHeap_free(MinHeap);
 void MinHeap_insert(MinHeap, Vertex);

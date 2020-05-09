@@ -5,6 +5,7 @@ CC = gcc # The compiler being used
 
 
 CFLAGS = -g -Wall -Werror -Wextra -pedantic # $(IFLAGS)
+#make sure you add wError 
 
 #source code path
 #VPATH=/h/jlittl04/comp/Projects/Sources/
@@ -25,5 +26,5 @@ SkiMap: main.o LinkedList.o Edge.o Vertex.o Errors.o SkiMap.o MinHeap.o SmallFlo
 
 
 clean:
-	rm -f SkiMap *.o
+	rm -f SkiMap *.o *.s
 

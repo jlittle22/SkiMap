@@ -50,5 +50,4 @@ Vertex Edge_getDest(Edge obj);
 ///////////////
 bool Edge_is(Edge obj, int type);
 
-
 #endif

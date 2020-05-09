@@ -43,14 +43,10 @@ union Convert{
 
 typedef union Convert Convert;
 
-//Member functions
 void SmallFloat_free(SmallFloat obj);
 float SmallFloat_SFDatatoF(uint32_t SFData);
 SmallFloat SmallFloat_FtoSF(float input);
 float SmallFloat_SFtoF(SmallFloat obj);
 uint32_t SmallFloat_getData(SmallFloat obj);
-
-
-
 
 #endif

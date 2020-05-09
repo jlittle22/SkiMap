@@ -61,9 +61,4 @@ uint8_t Vertex_getNumEdgesInPath(Vertex obj);
 float Vertex_getNewAvg(Vertex obj, float newNumber);
 void Vertex_updateAverage(Vertex obj, float newPathWeight, uint8_t numEdgesInPath);
 
-void Vertex_testFloats(Vertex obj);
-
-
-
-
 #endif

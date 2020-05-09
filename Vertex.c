@@ -5,17 +5,12 @@ static void assignVertName(Vertex obj, char array[]);
 /* Bitpacking Mini-Module */ 
 static void setFDistance(Vertex obj, float input);
 static float getFDistance(Vertex obj);
-
 static uint32_t flag(uint32_t word, int bitLocation);
 static uint32_t unflag(uint32_t word, int bitLocation);
 static void checkRatingRange(uint32_t givenVal);
-// ***** MIGHT NEED static void checkDistanceRange(uint32_t givenVal);
 static uint32_t setDiffRate(uint32_t word, uint32_t rating);
 static bool checkFlag(uint32_t word, int bitLocation);
 static uint32_t getDiffRate(uint32_t word);
-//static uint32_t setDistance(uint32_t word, uint32_t distance);
-//static uint32_t getDistance(uint32_t word);
-/*                        */
 
 Vertex Vertex_new(char name[], uint32_t classValue){
 	Vertex new = malloc(VERTEX_SIZE);
@@ -120,11 +115,6 @@ void Vertex_updateAverage(Vertex obj, float newPathWeight, uint8_t numEdgesInPat
 	obj->edgesInPath = numEdgesInPath;
 }
 
-void Vertex_testFloats(Vertex obj){
-	Vertex_setDistance(obj, INFINITE_DIST);
-	fprintf(stderr, "Start Dist: %f\n", Vertex_getDistance(obj));
-}
-
 float Vertex_getNewAvg(Vertex obj, float newNumber){
 	nullCheck("ERROR:: at Vertex_getNewAvg. Obj is NULL.", obj);
 	float currAvg = Vertex_getDistance(obj);
@@ -176,23 +166,6 @@ static void checkRatingRange(uint32_t givenVal){
 	}
 }
 
-/*static void checkDistanceRange(uint32_t givenVal){
-	uint32_t max = INFINITE_DIST;
-	if (givenVal > max){
-		fprintf(stderr, "ERROR: distance {%u} is out of range.\n", givenVal);
-		exit(1);
-	}
-}
-*/ 
-/*static uint32_t setDistance(uint32_t word, uint32_t distance){
-	checkDistanceRange(distance);
-	uint32_t clearMask = ONE_BIT_AT(DISTANCE_LSB)-1;
-	clearMask = clearMask & word;
-	distance = distance << DISTANCE_LSB;
-    return (distance | clearMask);          
-}
-*/
-
 static uint32_t setDiffRate(uint32_t word, uint32_t rating){
 	checkRatingRange(rating);
 	uint32_t mask = ~(ONE_BIT_AT((VERT_CLASS_MSB+1)) - 1); 
@@ -208,10 +181,3 @@ static uint32_t getDiffRate(uint32_t word){
 	uint32_t mask = ONE_BIT_AT((VERT_CLASS_MSB+1))-1;
 	return (word & mask);
 }
-
-/*static uint32_t getDistance(uint32_t word){
-	uint32_t mask = (0x0-1); 
-	mask = mask >> DISTANCE_LSB;
-	mask = mask << DISTANCE_LSB;
-	return ((word & mask) >> DISTANCE_LSB);
-}*/

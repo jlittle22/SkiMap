@@ -15,7 +15,6 @@ MinHeap MinHeap_new(){
 }
 
 void MinHeap_free(MinHeap obj){
-	//Individual vertex objects will be freed independently.
 	nullCheck("ERROR:: at MinHeap_free. Object is NULL.", obj);
 	nullCheck("ERROR:: at MinHeap_insert. Object array is NULL.", obj->dataArray);
 	free(obj->dataArray);
@@ -94,12 +93,3 @@ Vertex MinHeap_extractTop(MinHeap obj){
 	return item;
 }
 
-/*static void printHeap(Vertex* arr, unsigned numElems){
-	if(numElems == 0){
-		fprintf(stderr, "%s\n", "Heap is EMPTY.");
-		return;
-	}
-	for (unsigned i = 0; i < ((numElems-1)/2); i++){
-		fprintf(stderr, "Parent: %u LChild: %u RChild: %u\n", Vertex_getDistance(arr[i]), Vertex_getDistance(arr[(2*i)+1]), Vertex_getDistance(arr[(2*i)+2]));
-	}
-}*/

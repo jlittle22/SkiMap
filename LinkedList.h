@@ -50,7 +50,6 @@ void List_free(List removeMe);
 Node* List_getItem(List, int);
 int List_numItems(List);
 
-
 #endif
 
 
