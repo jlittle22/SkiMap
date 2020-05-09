@@ -219,10 +219,13 @@ void SkiMap_bellmanFord(SkiMap obj, Vertex source, uint8_t userPreferences){
 
 void SkiMap_relaxEdge(Vertex source, Edge target, uint8_t userPreferences){
 	Vertex dest = target->destination;
-	float newPathWeight = Vertex_getDistance(source) + SkiMap_evaluateEdge(target, userPreferences);
+	float newPathWeight = Vertex_getNewAvg(source, SkiMap_evaluateEdge(target, userPreferences)); 
+	uint8_t newPathNumEdges = Vertex_getNumEdgesInPath(source) + 1;
+	fprintf(stderr, "Relaxing Edge %s to %s\n", target->edgeName, dest->vertexName);
+	fprintf(stderr, "     Possible New Weight: %f Current Weight: %f Number of Edges in Best Path: %u\n", newPathWeight, Vertex_getDistance(dest), Vertex_getNumEdgesInPath(dest));
 	if(newPathWeight < Vertex_getDistance(dest)){
 		dest->toParent = target;
-		Vertex_setDistance(dest, newPathWeight);
+		Vertex_updateAverage(dest, newPathWeight, newPathNumEdges);
 	}
 }
 
@@ -234,7 +237,8 @@ float SkiMap_evaluateEdge(Edge target, uint8_t userPreferences){
 			score = score - 1.0;
 		}
 	}
-	fprintf(stderr, "Score is: %f\n", score);
+	fprintf(stderr, "---- EVALUATIING %s\n", target->edgeName);
+	fprintf(stderr, "     score: %f\n", score);
 	return score;
 }
 

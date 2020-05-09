@@ -16,7 +16,7 @@
 #include "LinkedList.h"
 #include "SmallFloat.h"
 
-#define VERT_NAME_CHAR_COUNT 7
+#define VERT_NAME_CHAR_COUNT 11
 
 ////////////////////////////////
 //   Vertex Classifications   //
@@ -36,10 +36,11 @@
 #define INFINITE_DIST 16.0F//((uint32_t)((0x0-1)>>(DISTANCE_LSB)))
 
 struct Vertex{
-	char vertexName[VERT_NAME_CHAR_COUNT];
-	uint32_t data; 
-	List edges;   
-	Edge toParent;
+	char vertexName[VERT_NAME_CHAR_COUNT]; // 11
+	uint8_t edgesInPath; // 1
+	uint32_t data; // 4 
+	List edges;   // 8 
+	Edge toParent; // 8 	
 }; 
 
 #define VERTEX_SIZE sizeof(struct Vertex)
@@ -56,7 +57,9 @@ void Vertex_setDiscovered(Vertex obj, bool value);
 void Vertex_setDistance(Vertex obj, float distance);
 float Vertex_getDistance(Vertex obj);
 bool Vertex_isInfinite(Vertex obj);
-
+uint8_t Vertex_getNumEdgesInPath(Vertex obj);
+float Vertex_getNewAvg(Vertex obj, float newNumber);
+void Vertex_updateAverage(Vertex obj, float newPathWeight, uint8_t numEdgesInPath);
 
 void Vertex_testFloats(Vertex obj);
 

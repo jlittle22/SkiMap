@@ -50,7 +50,6 @@ float SmallFloat_SFtoF(SmallFloat obj){
 	Convert toFloat;
 	toFloat.bits = value;
 	SmallFloat_free(obj);
-	fprintf(stderr, "\nResult Hex    : %x\n", toFloat.bits);
 	return toFloat.value;
 }
 
@@ -77,6 +76,9 @@ static void setSmallMant(SmallFloat obj, uint32_t mant){
 }
 
 static int8_t getFloatExp(uint32_t input){
+	if ((int32_t)input == 0){
+		return 0;
+	}
 	uint32_t temp = (input >> STD_EXP_LSB);
 	uint32_t mask = (ONE_AT((STD_SIGN - STD_EXP_LSB)) - 1);
 	temp = temp & mask;

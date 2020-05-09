@@ -1,6 +1,5 @@
 #include "Vertex.h"
 
-
 static void assignVertName(Vertex obj, char array[]);
 
 /* Bitpacking Mini-Module */ 
@@ -14,11 +13,9 @@ static void checkRatingRange(uint32_t givenVal);
 static uint32_t setDiffRate(uint32_t word, uint32_t rating);
 static bool checkFlag(uint32_t word, int bitLocation);
 static uint32_t getDiffRate(uint32_t word);
-float avgFormula(float currAvg, float currTotal, float newNumer, unsigned denom);
 //static uint32_t setDistance(uint32_t word, uint32_t distance);
 //static uint32_t getDistance(uint32_t word);
 /*                        */
-
 
 Vertex Vertex_new(char name[], uint32_t classValue){
 	Vertex new = malloc(VERTEX_SIZE);
@@ -28,6 +25,7 @@ Vertex Vertex_new(char name[], uint32_t classValue){
 	Vertex_setDistance(new, INFINITE_DIST);
 	new->edges = List_new();
 	new->toParent = NULL;
+	new->edgesInPath = 0; 				
 	return new;
 }
 
@@ -111,13 +109,28 @@ bool Vertex_isInfinite(Vertex obj){
 	}
 }
 
+uint8_t Vertex_getNumEdgesInPath(Vertex obj){
+	nullCheck("ERROR:: at Vertex_getNumEdgesInPath. Obj is NULL.", obj);
+	return obj->edgesInPath;
+}
+
+void Vertex_updateAverage(Vertex obj, float newPathWeight, uint8_t numEdgesInPath){
+	nullCheck("ERROR:: at Vertex_updateAverage. Obj is NULL.", obj);
+	Vertex_setDistance(obj, newPathWeight);
+	obj->edgesInPath = numEdgesInPath;
+}
+
 void Vertex_testFloats(Vertex obj){
-	float test =10.0;
-	Convert comp;
-	comp.value = test;
-	fprintf(stderr, "OG Float: %x\n", comp.bits);
-	setFDistance(obj, test);
-	fprintf(stderr, "Resulting Float: %f\n", getFDistance(obj));
+	Vertex_setDistance(obj, INFINITE_DIST);
+	fprintf(stderr, "Start Dist: %f\n", Vertex_getDistance(obj));
+}
+
+float Vertex_getNewAvg(Vertex obj, float newNumber){
+	nullCheck("ERROR:: at Vertex_getNewAvg. Obj is NULL.", obj);
+	float currAvg = Vertex_getDistance(obj);
+	float numberOfValues = (float)Vertex_getNumEdgesInPath(obj);
+	float newAvg = currAvg*(numberOfValues/(numberOfValues+1)) + (newNumber/(numberOfValues+1));
+	return newAvg;
 }
 
 ///////////////////////////
