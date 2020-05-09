@@ -6,6 +6,7 @@ static void randomPathDown_Helper(Vertex current, bool first);
 static bool visitedAll(int arr[], int size);
 static void freeAllVertices(List remove);
 static bool checkFlag(uint8_t word, unsigned bitLocation);
+static bool matchingFlags(int i, uint8_t field1, uint8_t field2);
 
 void SkiMap_loadVertices(SkiMap obj, char vertFile[]){
 	FILE* verts = fopen(vertFile, "r");	
@@ -171,10 +172,6 @@ static unsigned randomNum(unsigned upperBound){
 	return (rand() % upperBound); 
 }
 
-// Bellman-Ford Best Path:
-//  * build relax edge function:
-//    - check if source.dist + edge.weight < destination.distance 
-
 void SkiMap_checkBFResults(SkiMap obj){
 	unsigned numVerts = List_numItems(obj->startPoints);
 	for(unsigned i = 0; i < numVerts; i++){
@@ -218,11 +215,12 @@ void SkiMap_bellmanFord(SkiMap obj, Vertex source, uint8_t userPreferences){
 }
 
 void SkiMap_relaxEdge(Vertex source, Edge target, uint8_t userPreferences){
+	if(Vertex_getDistance(source) == INFINITE_DIST){
+		return;
+	}
 	Vertex dest = target->destination;
 	float newPathWeight = Vertex_getNewAvg(source, SkiMap_evaluateEdge(target, userPreferences)); 
 	uint8_t newPathNumEdges = Vertex_getNumEdgesInPath(source) + 1;
-	fprintf(stderr, "Relaxing Edge %s to %s\n", target->edgeName, dest->vertexName);
-	fprintf(stderr, "     Possible New Weight: %f Current Weight: %f Number of Edges in Best Path: %u\n", newPathWeight, Vertex_getDistance(dest), Vertex_getNumEdgesInPath(dest));
 	if(newPathWeight < Vertex_getDistance(dest)){
 		dest->toParent = target;
 		Vertex_updateAverage(dest, newPathWeight, newPathNumEdges);
@@ -232,14 +230,19 @@ void SkiMap_relaxEdge(Vertex source, Edge target, uint8_t userPreferences){
 float SkiMap_evaluateEdge(Edge target, uint8_t userPreferences){
 	assert(target);
 	float score = SIZE_OF_WORD_F;
+	if(Edge_is(target, LIFT_UP) == true){
+		score = score - 1.0;
+	}
 	for (unsigned i = 0; i < SIZE_OF_WORD; i++){
-		if(checkFlag(userPreferences, i) == true && checkFlag(target->diffRating, i) == true){
+		if(matchingFlags(i, userPreferences, target->diffRating) == true){
 			score = score - 1.0;
 		}
 	}
-	fprintf(stderr, "---- EVALUATIING %s\n", target->edgeName);
-	fprintf(stderr, "     score: %f\n", score);
 	return score;
+}
+
+static bool matchingFlags(int i, uint8_t field1, uint8_t field2){
+	return (checkFlag(field1, i) == true && checkFlag(field2, i) == true); 
 }
 
 static bool checkFlag(uint8_t word, unsigned bitLocation){

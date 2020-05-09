@@ -45,8 +45,8 @@ float SmallFloat_SFtoF(SmallFloat obj){
 	uint32_t mant = getSFMantissa(obj->data);
 	int8_t exp = getSFExp(obj->data);
 	float value = 0;
-	value = setFloatExp(value, exp);
 	value = setFloatMantissa(value, mant);
+	value = setFloatExp(value, exp);
 	Convert toFloat;
 	toFloat.bits = value;
 	SmallFloat_free(obj);
@@ -77,7 +77,7 @@ static void setSmallMant(SmallFloat obj, uint32_t mant){
 
 static int8_t getFloatExp(uint32_t input){
 	if ((int32_t)input == 0){
-		return 0;
+		return (-1 * BIAS);
 	}
 	uint32_t temp = (input >> STD_EXP_LSB);
 	uint32_t mask = (ONE_AT((STD_SIGN - STD_EXP_LSB)) - 1);
@@ -111,6 +111,9 @@ static int8_t getSFExp(uint32_t input){
 
 static float setFloatExp(uint32_t input, int8_t exp){
 	checkSignedRange("ERROR:: at setFloatExp. Exp is outside range.", exp, STD_BIAS, (-1*STD_BIAS));
+	if (input == 0 && exp == (-1 * BIAS)){
+		exp = (-1 * STD_BIAS);
+	}
    	uint32_t newExp = (uint32_t)exp;
 	newExp = newExp + STD_BIAS;
 	uint32_t mask = newExp << STD_EXP_LSB;
