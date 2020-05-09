@@ -192,7 +192,7 @@ void SkiMap_checkBFResults(SkiMap obj){
 			j++;
 		}
 		fprintf(stderr, "--Path %u--\n", i);
-		fprintf(stderr, "VERTEX: %s Weight: %u\n",temp->vertexName, Vertex_getDistance(temp));
+		fprintf(stderr, "VERTEX: %s Weight: %f\n",temp->vertexName, Vertex_getDistance(temp));
 		List_print(path->list);
 		List_partialFree(path);
 	}
@@ -219,32 +219,23 @@ void SkiMap_bellmanFord(SkiMap obj, Vertex source, uint8_t userPreferences){
 
 void SkiMap_relaxEdge(Vertex source, Edge target, uint8_t userPreferences){
 	Vertex dest = target->destination;
-	unsigned newPathWeight = Vertex_getDistance(source) + SkiMap_evaluateEdge(target, userPreferences);
-//	if(strcmp(target->edgeName, "TheQuad") == 0 || strcmp(target->edgeName, "WhiteCaps") == 0 || strcmp(target->edgeName, "TheChute") == 0 || strcmp(target->edgeName, "TrueGrit") == 0 || strcmp(target->edgeName, "ValleyRun") == 0){
-	fprintf(stderr, "Evaluating %s to Vertex: %s\n", target->edgeName, target->destination->vertexName);
-	fprintf(stderr, "%s: .... NewPathWeight %u Old %u\n",target->edgeName, newPathWeight, Vertex_getDistance(dest));
-//	}
+	float newPathWeight = Vertex_getDistance(source) + SkiMap_evaluateEdge(target, userPreferences);
 	if(newPathWeight < Vertex_getDistance(dest)){
-//		if (strcmp(dest->vertexName, "lift2") == 0){
-//			fprintf(stderr, "Setting lift2 dist to %u as opposed to %u...\n", newPathWeight, Vertex_getDistance(dest));
-//		}
 		dest->toParent = target;
 		Vertex_setDistance(dest, newPathWeight);
 	}
 }
 
-unsigned SkiMap_evaluateEdge(Edge target, uint8_t userPreferences){
+float SkiMap_evaluateEdge(Edge target, uint8_t userPreferences){
 	assert(target);
-	unsigned count = SIZE_OF_WORD; 
-	fprintf(stderr, "CHARACTERISTICS:");
+	float score = SIZE_OF_WORD_F;
 	for (unsigned i = 0; i < SIZE_OF_WORD; i++){
 		if(checkFlag(userPreferences, i) == true && checkFlag(target->diffRating, i) == true){
-			fprintf(stderr, " %u ", i);
-			count--;
+			score = score - 1.0;
 		}
 	}
-	fprintf(stderr, "EDGE: %s SCORE: %u\n", target->edgeName, count);
-	return count;
+	fprintf(stderr, "Score is: %f\n", score);
+	return score;
 }
 
 static bool checkFlag(uint8_t word, unsigned bitLocation){

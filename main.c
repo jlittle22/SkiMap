@@ -38,27 +38,28 @@ void path(Vertex start){
 
 int main(){
 	Convert input;
-	input.value = 10.3234329909809804;
+	float ttest3 = 1.0;
+	fprintf(stderr, "Weird Hex: %x\n", (uint32_t)ttest3);
+	input.value = 1.0;
 
 	fprintf(stderr, "Original Hex  : %x\n", input.bits);
 	fprintf(stderr, "Original Float: %f\n", input.value);
 	SmallFloat floa = SmallFloat_FtoSF(input.value);
 	float result = SmallFloat_SFtoF(floa);
 	fprintf(stderr, "Result Float  : %f\n", result);
-
-	return 0;
-
 	srand(time(NULL));
 	SkiMap test = SkiMap_new("TEstMtn", "basic.vdata", "basic.edata");
+
 	List_print(test->allVertices->list);
 	uint8_t userP = 1;
 	Vertex src = (Vertex)(List_getItem(test->startPoints, 0)->data);
+/////////////////
+	Vertex_testFloats(src);
+/////////////////
 
 	SkiMap_bellmanFord(test, src, userP);
 	SkiMap_checkBFResults(test);
-
-
-	MinHeap heap = MinHeap_new();
+	/*MinHeap heap = MinHeap_new();
 	int count = 0;
 	while (count < 100){
 		Vertex test1 = Vertex_new("Top", 0);
@@ -70,7 +71,7 @@ int main(){
 	for(int i = 0; i < 100; i++){
 		fprintf(stderr, "TOP Val: %u\n", Vertex_getDistance(MinHeap_extractTop(heap)));
 	}
-    MinHeap_free(heap);
+    MinHeap_free(heap);*/
 	SkiMap_free(test);
 
 	// int size = List_numItems(test->allVertices);

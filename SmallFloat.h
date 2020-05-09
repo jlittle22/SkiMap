@@ -32,7 +32,9 @@
 struct SmallFloat{
 	uint32_t data; 
 };
+
 #define FLOAT_SIZE sizeof(struct SmallFloat)
+typedef struct SmallFloat* SmallFloat; 
 
 union Convert{
 	uint32_t bits;
@@ -40,14 +42,13 @@ union Convert{
 };
 
 typedef union Convert Convert;
-typedef struct SmallFloat* SmallFloat; 
 
-SmallFloat SmallFloat_new();
+//Member functions
 void SmallFloat_free(SmallFloat obj);
-
-//Here for testing purposes
+float SmallFloat_SFDatatoF(uint32_t SFData);
 SmallFloat SmallFloat_FtoSF(float input);
 float SmallFloat_SFtoF(SmallFloat obj);
+uint32_t SmallFloat_getData(SmallFloat obj);
 
 
 

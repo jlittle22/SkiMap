@@ -8,8 +8,9 @@ static void setSmallMant(SmallFloat obj, uint32_t mant);
 static void setSmallExp(SmallFloat obj, int8_t exp); 
 static float setFloatExp(uint32_t input, int8_t exp); 
 static float setFloatMantissa(uint32_t input, uint32_t mantissa);
+static SmallFloat SmallFloat_new();
 
-SmallFloat SmallFloat_new(){
+static SmallFloat SmallFloat_new(){
 	SmallFloat new = (SmallFloat) malloc(FLOAT_SIZE);
 	nullCheck("ERROR:: at SmallFloat_new. Malloc failed.", new);
 	new->data = (uint32_t)0x0;
@@ -19,6 +20,13 @@ SmallFloat SmallFloat_new(){
 void SmallFloat_free(SmallFloat obj){
 	nullCheck("ERROR:: at SmallFloat_free. Object is NULL.", obj);
 	free(obj);
+}
+
+float SmallFloat_SFDatatoF(uint32_t SFData){
+	SmallFloat decompress = SmallFloat_new();
+	decompress->data = SFData;
+	float value = SmallFloat_SFtoF(decompress);
+	return value;
 }
 
 SmallFloat SmallFloat_FtoSF(float input){
@@ -46,9 +54,16 @@ float SmallFloat_SFtoF(SmallFloat obj){
 	return toFloat.value;
 }
 
+uint32_t SmallFloat_getData(SmallFloat obj){
+	nullCheck("ERROR:: at SmallFloat_getData. Obj is NULL.", obj);
+	return obj->data;
+}
+
 static void setSmallExp(SmallFloat obj, int8_t exp){
 	nullCheck("ERROR:: at setSmallExp. Obj is NULL.", obj);
-	checkSignedRange("ERROR:: at setSmallExp. Exp is out of range.", exp, BIAS, (-1*BIAS));
+	if (exp != 4){
+		checkSignedRange("ERROR:: at setSmallExp. Exp is out of range.", exp, BIAS, (-1*BIAS));
+	}
 	exp = exp + BIAS;
 	uint32_t mask = (uint32_t)exp; 
 	mask = mask << EXP_LSB;

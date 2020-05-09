@@ -14,6 +14,7 @@
 #include <stdbool.h>
 #include "Edge.h"
 #include "LinkedList.h"
+#include "SmallFloat.h"
 
 #define VERT_NAME_CHAR_COUNT 7
 
@@ -29,10 +30,10 @@
 ///////////////////////////
 
 /*    Vertex    */
-#define VERT_CLASS_MSB 1
-#define DISC_FLAG (VERT_CLASS_MSB+1)
-#define DISTANCE_LSB (DISC_FLAG+1)
-#define INFINITE_DIST ((uint32_t)((0x0-1)>>(DISTANCE_LSB)))
+#define VERT_CLASS_MSB 1 
+#define DISC_FLAG (VERT_CLASS_MSB+1) 
+#define DISTANCE_LSB (DISC_FLAG+1) 
+#define INFINITE_DIST 16.0F//((uint32_t)((0x0-1)>>(DISTANCE_LSB)))
 
 struct Vertex{
 	char vertexName[VERT_NAME_CHAR_COUNT];
@@ -52,11 +53,12 @@ int Vertex_numEdges(Vertex obj);
 uint32_t Vertex_getClass(Vertex obj);
 bool Vertex_isDiscovered(Vertex obj);
 void Vertex_setDiscovered(Vertex obj, bool value);
-void Vertex_setDistance(Vertex obj, uint32_t distance);
-uint32_t Vertex_getDistance(Vertex obj);
+void Vertex_setDistance(Vertex obj, float distance);
+float Vertex_getDistance(Vertex obj);
 bool Vertex_isInfinite(Vertex obj);
 
 
+void Vertex_testFloats(Vertex obj);
 
 
 

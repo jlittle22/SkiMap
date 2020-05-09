@@ -4,15 +4,19 @@
 static void assignVertName(Vertex obj, char array[]);
 
 /* Bitpacking Mini-Module */ 
+static void setFDistance(Vertex obj, float input);
+static float getFDistance(Vertex obj);
+
 static uint32_t flag(uint32_t word, int bitLocation);
 static uint32_t unflag(uint32_t word, int bitLocation);
 static void checkRatingRange(uint32_t givenVal);
-static void checkDistanceRange(uint32_t givenVal);
+// ***** MIGHT NEED static void checkDistanceRange(uint32_t givenVal);
 static uint32_t setDiffRate(uint32_t word, uint32_t rating);
 static bool checkFlag(uint32_t word, int bitLocation);
 static uint32_t getDiffRate(uint32_t word);
-static uint32_t setDistance(uint32_t word, uint32_t distance);
-static uint32_t getDistance(uint32_t word);
+float avgFormula(float currAvg, float currTotal, float newNumer, unsigned denom);
+//static uint32_t setDistance(uint32_t word, uint32_t distance);
+//static uint32_t getDistance(uint32_t word);
 /*                        */
 
 
@@ -28,13 +32,14 @@ Vertex Vertex_new(char name[], uint32_t classValue){
 }
 
 void Vertex_free(Vertex delete){
-	assert(delete);
+	nullCheck("ERROR:: at Vertex_free. Obj is NULL.", delete);
 	List_free(delete->edges);
 	free(delete);
 }
 
 static void assignVertName(Vertex obj, char array[]){
-	assert(obj);
+	nullCheck("ERROR:: at assignVertName. Obj is NULL.", obj);
+	nullCheck("ERROR:: at assignVertName. Name string is NULL.", array);
 	int i;
 	int arraySize = strlen(array);
 	int size = (arraySize > VERT_NAME_CHAR_COUNT-1) ? VERT_NAME_CHAR_COUNT-1 : arraySize;
@@ -48,13 +53,14 @@ static void assignVertName(Vertex obj, char array[]){
 }
 
 void Vertex_addEdge(Vertex obj, void * newEdge){
-	assert(obj);
+	nullCheck("ERROR:: at Vertex_addEdge. Obj is NULL.", obj);
+	nullCheck("ERROR:: at Vertex_addEdge. newEdge is NULL.", newEdge);
 	assert(newEdge);
 	List_insert(obj->edges, newEdge);
 }
 
 Edge Vertex_getEdge(Vertex obj, int index){
-	assert(obj);
+	nullCheck("ERROR:: at Vertex_getEdge. Obj is NULL.", obj);
 	Node* resultNode = List_getItem(obj->edges, index); 
 	if (resultNode == NULL){
 		return NULL;
@@ -63,22 +69,22 @@ Edge Vertex_getEdge(Vertex obj, int index){
 }
 
 int Vertex_numEdges(Vertex obj){
-	assert(obj);
+	nullCheck("ERROR:: at Vertex_numEdges. Obj is NULL.", obj);
 	return List_numItems(obj->edges);
 }
 
 uint32_t Vertex_getClass(Vertex obj){
-	assert(obj);
+	nullCheck("ERROR:: at Vertex_getClass. Obj is NULL.", obj);
 	return getDiffRate(obj->data);
 }
 
 bool Vertex_isDiscovered(Vertex obj){
-	assert(obj);
+	nullCheck("ERROR:: at Vertex_isDiscovered. Obj is NULL.", obj);
 	return checkFlag(obj->data, DISC_FLAG);
 }
 
 void Vertex_setDiscovered(Vertex obj, bool value){
-	assert(obj);
+	nullCheck("ERROR:: at Vertex_setDiscovered. Obj is NULL.", obj);
 	if(value == true){
 		obj->data = flag(obj->data, DISC_FLAG);
 	}
@@ -86,14 +92,14 @@ void Vertex_setDiscovered(Vertex obj, bool value){
 		obj->data = unflag(obj->data, DISC_FLAG);
 	}
 }
-void Vertex_setDistance(Vertex obj, uint32_t distance){
-	assert(obj);
-	obj->data = setDistance(obj->data, distance);
+void Vertex_setDistance(Vertex obj, float distance){
+	nullCheck("ERROR:: at Vertex_setDistance. Obj is NULL.", obj);
+	setFDistance(obj, distance);
 }
 
-uint32_t Vertex_getDistance(Vertex obj){
-	assert(obj);
-	return getDistance(obj->data);
+float Vertex_getDistance(Vertex obj){
+	nullCheck("ERROR:: at Vertex_getDistance. Obj is NULL.", obj);
+	return getFDistance(obj);
 }
 
 bool Vertex_isInfinite(Vertex obj){
@@ -105,11 +111,38 @@ bool Vertex_isInfinite(Vertex obj){
 	}
 }
 
-
+void Vertex_testFloats(Vertex obj){
+	float test =10.0;
+	Convert comp;
+	comp.value = test;
+	fprintf(stderr, "OG Float: %x\n", comp.bits);
+	setFDistance(obj, test);
+	fprintf(stderr, "Resulting Float: %f\n", getFDistance(obj));
+}
 
 ///////////////////////////
 //        BITPACK        //
 ///////////////////////////
+static void setFDistance(Vertex obj, float input){
+	nullCheck("ERROR:: at setDistance. Obj is NULL.", obj);
+	SmallFloat compressor = SmallFloat_FtoSF(input);
+	uint32_t compressed = SmallFloat_getData(compressor);
+	SmallFloat_free(compressor);
+	compressed = compressed << DISTANCE_LSB;
+	uint32_t clearMask = ONE_BIT_AT(DISTANCE_LSB)-1;
+	clearMask = clearMask & obj->data;
+	compressed = compressed | clearMask;
+	obj->data = compressed;
+}
+
+static float getFDistance(Vertex obj){
+	uint32_t mask = ONE_BIT_AT(SF_BITS) - 1;
+	mask = mask << DISTANCE_LSB;
+	mask = mask & obj->data;
+	mask = mask >> DISTANCE_LSB;
+	float decompressed = SmallFloat_SFDatatoF(mask);
+	return decompressed;
+}
 
 static uint32_t flag(uint32_t word, int bitLocation){
 	uint32_t mask = ONE_BIT_AT(bitLocation);
@@ -130,21 +163,22 @@ static void checkRatingRange(uint32_t givenVal){
 	}
 }
 
-static void checkDistanceRange(uint32_t givenVal){
+/*static void checkDistanceRange(uint32_t givenVal){
 	uint32_t max = INFINITE_DIST;
 	if (givenVal > max){
 		fprintf(stderr, "ERROR: distance {%u} is out of range.\n", givenVal);
 		exit(1);
 	}
 }
-static uint32_t setDistance(uint32_t word, uint32_t distance){
+*/ 
+/*static uint32_t setDistance(uint32_t word, uint32_t distance){
 	checkDistanceRange(distance);
 	uint32_t clearMask = ONE_BIT_AT(DISTANCE_LSB)-1;
 	clearMask = clearMask & word;
 	distance = distance << DISTANCE_LSB;
     return (distance | clearMask);          
 }
-
+*/
 
 static uint32_t setDiffRate(uint32_t word, uint32_t rating){
 	checkRatingRange(rating);
@@ -162,9 +196,9 @@ static uint32_t getDiffRate(uint32_t word){
 	return (word & mask);
 }
 
-static uint32_t getDistance(uint32_t word){
+/*static uint32_t getDistance(uint32_t word){
 	uint32_t mask = (0x0-1); 
 	mask = mask >> DISTANCE_LSB;
 	mask = mask << DISTANCE_LSB;
 	return ((word & mask) >> DISTANCE_LSB);
-}
+}*/
