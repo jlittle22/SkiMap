@@ -7,6 +7,7 @@ static bool visitedAll(int arr[], int size);
 static void freeAllVertices(List remove);
 static bool checkFlag(uint8_t word, unsigned bitLocation);
 static bool matchingFlags(int i, uint8_t field1, uint8_t field2);
+static uint8_t defineNegationZone(uint8_t userPreferences);
 
 void SkiMap_loadVertices(SkiMap obj, char vertFile[]){
 	FILE* verts = fopen(vertFile, "r");	
@@ -237,8 +238,24 @@ float SkiMap_evaluateEdge(Edge target, uint8_t userPreferences){
 		if(matchingFlags(i, userPreferences, target->diffRating) == true){
 			score = score - 1.0;
 		}
+		else if(matchingFlags(i, target->diffRating, defineNegationZone(userPreferences))){
+			score = score + 0.5;
+		}
 	}
 	return score;
+}
+
+static uint8_t defineNegationZone(uint8_t userPreferences){
+	uint8_t diffMask = ONE_BIT_AT((DOUBLE+1))-1;
+	int max = -1;
+	for (int i = 0; i < DOUBLE; i++){
+		if (checkFlag(userPreferences, i) == true){
+			max = i;
+		}
+	}
+	diffMask >>= (max+1);
+	diffMask <<= (max+1);
+	return diffMask;
 }
 
 static bool matchingFlags(int i, uint8_t field1, uint8_t field2){

@@ -1,6 +1,6 @@
 
 ░██████╗██╗░░██╗██╗███╗░░░███╗░█████╗░██████╗░
-██╔════╝██║░██╔╝██║████╗░████║██╔══██╗██╔══██╗
+██╔════╝██║░██╔╝██║████╗░████║██╔══██╗██╔══██╗     
 ╚█████╗░█████═╝░██║██╔████╔██║███████║██████╔╝
 ░╚═══██╗██╔═██╗░██║██║╚██╔╝██║██╔══██║██╔═══╝░
 ██████╔╝██║░╚██╗██║██║░╚═╝░██║██║░░██║██║░░░░░
@@ -14,11 +14,30 @@
 *                                 *
 ***********************************
 
+(!)STILL IN DEVELOPMENT(!)
+
 --INTRODUCTION--
+
 Abstract Goal: 
 	Read in graph data representing a ski resort. Accept user preferences
 	and report a random path up and back down the mountain that meets as 
 	many of their preferences as possible. 
+
+Abstract Description:
+	User preferences are logged as flags in an 8-bit field which is passed to
+	the driver. The driver reads in data from two files containing Vertex and 
+	Edge information, loads it into objects, and initializes a SkiMap object
+	(a graph). The SkiMap module uses a modified Bellman-Ford algorithm to 
+	determine the path that most-closely matches the users preferences, free
+	of biases regarding the length of the path. 
+
+To-Be-Implemented:
+	* Add some kind of incentive for the algorithm to AVOID paths with trails
+	  that are MORE difficult than the highest difficulty requested.
+    * Being able to produce the top 3 paths based on search parameters so that
+      users can explore new paths
+    * Cycle through top paths for a certain set of preferences for the same
+      input doesn't generate the same answer every time.
 	
 --OBJECTS--
 
@@ -100,6 +119,8 @@ Ski Maps (SkiMap.h/SkiMap.c) *NEEDS WORK:
 		List startPoints;
 	};
 
+--ALGORITHMS--
+
 
 --STRUCTURE--
 		    Ski Map       <- Highest Level. Represents Graph structure.
@@ -141,4 +162,3 @@ LINE: [VertexName] [VertexClassification]
 
 EXAMPLE: Lift 1
 
---OTHER--

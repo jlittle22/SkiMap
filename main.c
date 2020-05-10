@@ -3,7 +3,7 @@
 #include "SmallFloat.h"
 
 int main(){//////////////
-	uint8_t userP = 1; // <- Edit me! User preferences are a byte. 
+	uint8_t userP = 5; // <- Edit me! User preferences are a byte. 
 ///////////////////////// Example: 00000101 is GREEN and BLACKS (0th and 2nd bits are flagged.)
 
 	srand(time(NULL));
