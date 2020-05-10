@@ -119,8 +119,16 @@ Ski Maps (SkiMap.h/SkiMap.c) *NEEDS WORK:
 		List startPoints;
 	};
 
+Min Heaps (MinHeap.h/MinHeap.c):
+	(!)to be documented...
+
 --ALGORITHMS--
 
+Bellman-Ford Algorithm:
+	(!)to be documented...
+
+SmallFloat (Float Compression by John Little):
+	(!)to be documented...
 
 --STRUCTURE--
 		    Ski Map       <- Highest Level. Represents Graph structure.
