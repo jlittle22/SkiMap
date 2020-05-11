@@ -173,9 +173,54 @@ static unsigned randomNum(unsigned upperBound){
 	return (rand() % upperBound); 
 }
 
-void SkiMap_checkBFResults(SkiMap obj){
+char* SkiMap_stringifyPath(List pathList){
+	int numItems = List_numItems(pathList);
+	char* path = (char*)malloc(VERT_NAME_CHAR_COUNT * numItems);
+	*path = '\0';
+	nullCheck("ERROR:: at SkiMap_stringifyPath. Malloc failed.", path);
+	for (int i = 0; i < numItems; i++){
+		Vertex curr = (Vertex)(List_getItem(pathList, i)->data);
+		char* currName = curr->vertexName;
+		strcat(path, currName);
+		strcat(path, " ");
+	}
+	List_partialFree(pathList);
+	return path;
+}
+
+List SkiMap_checkBFResults(SkiMap obj){
 	unsigned numVerts = List_numItems(obj->startPoints);
-	for(unsigned i = 0; i < numVerts; i++){
+	float min = 16.0;
+	int minIndex = -1;
+	for (unsigned i = 0; i < numVerts; i++){
+		Vertex curr = (Vertex)(List_getItem(obj->startPoints, i)->data);
+		if(Vertex_getDistance(curr) < min){
+			min = Vertex_getDistance(curr);
+			minIndex = (int)i;
+		}
+	}
+	if(minIndex == -1 || min == 16.0){
+		fprintf(stderr, "BIG FAT ERROR IN SkiMap_checkBFResults!! No path reported!!\n");
+		return NULL;
+	}
+
+	int j = 0;
+	Vertex bestEnd = (Vertex)(List_getItem(obj->startPoints, minIndex)->data);
+	float bestDistance = Vertex_getDistance(bestEnd);
+	List bestPath = List_new();
+	while(bestEnd != NULL){
+		if(Vertex_getClass(bestEnd) == ONLOAD && j > 0){
+			break;
+		}
+		Edge currEdge = bestEnd->toParent;
+		List_insert(bestPath, currEdge);
+		bestEnd = currEdge->source;
+		j++;
+	}
+	fprintf(stderr, "VERTEX: %s Weight: %f\n", bestEnd->vertexName, bestDistance);
+	List_print(bestPath->list);
+	return bestPath;
+	/*for(unsigned i = 0; i < numVerts; i++){
 		Vertex curr = (Vertex)(List_getItem(obj->startPoints, i)->data);
 		Vertex temp = curr;
 		List path = List_new();
@@ -193,7 +238,7 @@ void SkiMap_checkBFResults(SkiMap obj){
 		fprintf(stderr, "VERTEX: %s Weight: %f\n",temp->vertexName, Vertex_getDistance(temp));
 		List_print(path->list);
 		List_partialFree(path);
-	}
+	}*/
 }
 
 void SkiMap_bellmanFord(SkiMap obj, Vertex source, uint8_t userPreferences){
@@ -231,9 +276,6 @@ void SkiMap_relaxEdge(Vertex source, Edge target, uint8_t userPreferences){
 float SkiMap_evaluateEdge(Edge target, uint8_t userPreferences){
 	assert(target);
 	float score = SIZE_OF_WORD_F;
-	if(Edge_is(target, LIFT_UP) == true){
-		score = score - 1.0;
-	}
 	for (unsigned i = 0; i < SIZE_OF_WORD; i++){
 		if(matchingFlags(i, userPreferences, target->diffRating) == true){
 			score = score - 1.0;

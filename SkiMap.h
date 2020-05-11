@@ -37,7 +37,7 @@ void SkiMap_randomPathDown(SkiMap obj);
 float SkiMap_evaluateEdge(Edge target, uint8_t userPreferences);
 void SkiMap_relaxEdge(Vertex source, Edge target, uint8_t userPreferences);
 void SkiMap_bellmanFord(SkiMap obj, Vertex source, uint8_t userPreferences);
-void SkiMap_checkBFResults(SkiMap obj);
+List SkiMap_checkBFResults(SkiMap obj);
 void SkiMap_driver();
-
+char* SkiMap_stringifyPath(List path);
 #endif
