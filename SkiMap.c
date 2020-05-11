@@ -9,19 +9,51 @@ static bool checkFlag(uint8_t word, unsigned bitLocation);
 static bool matchingFlags(int i, uint8_t field1, uint8_t field2);
 static uint8_t defineNegationZone(uint8_t userPreferences);
 
-void SkiMap_loadVertices(SkiMap obj, char vertFile[]){
-	FILE* verts = fopen(vertFile, "r");	
-	char stringName[VERT_NAME_CHAR_COUNT];
-	uint8_t class; 
-	while(fscanf(verts, "%s %hhu\n", stringName, &class) == 2){
-		//fscanf(verts, "%s %hhu\n", stringName, &class);
-		Vertex new = Vertex_new(stringName, class);
-    	List_insert(obj->allVertices, new);
-    	if (class == ONLOAD){
-    		List_insert(obj->startPoints, new);
-    	}
+static void loadVertex(SkiMap obj, char* line){
+	char* token = strtok(line, " ");
+	char* vertexName;
+	char* vertClass;
+	int count = 0;
+	while(token != NULL){
+		if(count == 0){
+			vertexName = token;
+		}
+		else if(count == 1){
+			vertClass = token;
+		}
+		token = strtok(NULL, " ");
+		count++;
 	}
-	fclose(verts);
+	uint32_t class = (uint32_t)atoi(vertClass);
+	Vertex newGuy = Vertex_new(vertexName, class);
+	if(class == ONLOAD){
+		List_insert(obj->startPoints, newGuy);
+	}
+	List_insert(obj->allVertices, newGuy);
+
+}
+
+///////////// fscanf(verts, "%s %hhu\n", stringName, &class) == 2
+void SkiMap_loadVertices(SkiMap obj, char* vdata){
+	assert(obj);
+	char line[MAX_EDGE_LINE_SIZE];
+	memset(line, 0, MAX_EDGE_LINE_SIZE);
+	char curr= 'A';
+	int index = 0;
+	while (curr != '\0'){//(char)255){
+		curr = (*vdata);
+		if(curr == '\n'){
+			loadVertex(obj, line);
+			index = 0;
+			memset(line, 0, MAX_EDGE_LINE_SIZE);
+		}
+		else {
+			line[index] = curr;
+			index++;
+		}
+		vdata++;
+	}	
+	
 }
 
 static void loadTrail(SkiMap obj, char* line){
@@ -55,24 +87,36 @@ static void loadTrail(SkiMap obj, char* line){
 	Vertex_addEdge(source, new);
 }
 
-void SkiMap_loadTrails(SkiMap obj, char trailFile[]){
+////////////
+void SkiMap_loadTrails(SkiMap obj, char* edata){
 	assert(obj);
-	FILE* trails = fopen(trailFile, "r");
-	assert(trails);
 	char line[MAX_EDGE_LINE_SIZE];
-	while (fgets(line, MAX_EDGE_LINE_SIZE, trails) != NULL){
-		loadTrail(obj, line);
+	memset(line, 0, MAX_EDGE_LINE_SIZE);
+	char curr = 'A';
+	int index = 0;
+	while (curr != '\0'){ //(char)255){
+		curr = (*edata);
+		if(curr == '\n'){
+			loadTrail(obj, line);
+			index = 0;
+			memset(line, 0, MAX_EDGE_LINE_SIZE);
+		}
+		else {
+			line[index] = curr;
+			index++;
+		}
+		edata++;
 	}
-	fclose(trails);
 }
 
-SkiMap SkiMap_new(char name[], char vertFile[], char trailFile[]){
+/////////////
+SkiMap SkiMap_new(char name[], char* vdata, char* edata){
 	SkiMap obj = malloc(SKI_MAP_SIZE);
 	obj->allVertices = List_new();
 	obj->startPoints = List_new();
 	assignMtnName(obj, name);
-    SkiMap_loadVertices(obj, vertFile);
-    SkiMap_loadTrails(obj, trailFile);
+    SkiMap_loadVertices(obj, vdata);
+    SkiMap_loadTrails(obj, edata);
     return obj;
 }
 
