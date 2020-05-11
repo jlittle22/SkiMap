@@ -13,8 +13,8 @@ void SkiMap_loadVertices(SkiMap obj, char vertFile[]){
 	FILE* verts = fopen(vertFile, "r");	
 	char stringName[VERT_NAME_CHAR_COUNT];
 	uint8_t class; 
-	while(!feof(verts)){
-		fscanf(verts, "%s %hhu\n", stringName, &class);
+	while(fscanf(verts, "%s %hhu\n", stringName, &class) == 2){
+		//fscanf(verts, "%s %hhu\n", stringName, &class);
 		Vertex new = Vertex_new(stringName, class);
     	List_insert(obj->allVertices, new);
     	if (class == ONLOAD){
@@ -59,9 +59,8 @@ void SkiMap_loadTrails(SkiMap obj, char trailFile[]){
 	assert(obj);
 	FILE* trails = fopen(trailFile, "r");
 	assert(trails);
-	while (!feof(trails)){
-		char line[MAX_EDGE_LINE_SIZE];
-		fgets(line, MAX_EDGE_LINE_SIZE, trails);
+	char line[MAX_EDGE_LINE_SIZE];
+	while (fgets(line, MAX_EDGE_LINE_SIZE, trails) != NULL){
 		loadTrail(obj, line);
 	}
 	fclose(trails);
