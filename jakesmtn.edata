@@ -1,0 +1,24 @@
+T1 V1 Dogs 1
+T1 V2 Cats 2
+T1 V3 Mice 0
+V1 V6 The_Bird 1
+V1 V7 Big_Rock 0
+V2 V7 Lil_Rock 2
+V2 V3 Braden 0
+V3 V8 Bumpy 0 6
+V6 B1 Park_Me 1 4
+V6 V9 Juice 0
+V7 V8 One_Way 1
+V8 V9 Too_Bumpy 2 6
+V8 B2 Park_Town 0 4
+V8 V10 Homeward 1
+V9 B1 Big_Yikes 3
+V10 B2 Bumpy_Tree 1 5
+T2 V3 Easy_Drop 0
+T2 V4 Sunday_Blue 1
+T2 V5 Tree_Slam 3 5
+V4 V8 Ehhhh 2
+V4 V5 Skurrt 1
+V5 V10 Tree_City 2 5
+B2 T2 Right_Side 7
+B1 T1 Left_Side 7
