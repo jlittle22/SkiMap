@@ -11,6 +11,7 @@ static uint8_t defineNegationZone(uint8_t userPreferences);
 static void readStringFile(SkiMap obj, char* data, void (*processLine)(SkiMap, char*));
 static void loadVertices(SkiMap obj, char* vdata);
 static void loadTrails(SkiMap obj, char* edata);
+static float randomFloat(float magnitude);
 
 static void loadVertex(SkiMap obj, char* line){
 	char* token = strtok(line, " ");
@@ -217,6 +218,15 @@ static unsigned randomNum(unsigned upperBound){
 	return (rand() % upperBound); 
 }
 
+static float randomFloat(float magnitude){
+	bool negative = (rand()%2);
+	float num = ((float)rand()/(float)RAND_MAX)*magnitude;
+	if(negative){
+		num *= -1.0;
+	}
+	return num;
+}
+
 char* SkiMap_stringifyPath(List pathList){
 	int numItems = List_numItems(pathList);
 	char* path = (char*)malloc(VERT_NAME_CHAR_COUNT * numItems);
@@ -260,6 +270,7 @@ List SkiMap_checkBFResults(SkiMap obj){
 		bestEnd = currEdge->source;
 		j++;
 	}
+	fprintf(stderr, "Score: %f ", min);
 	return bestPath;
 }
 
@@ -291,7 +302,7 @@ void SkiMap_relaxEdge(Vertex source, Edge target, uint8_t userPreferences){
 	uint8_t newPathNumEdges = Vertex_getNumEdgesInPath(source) + 1;
 	if(newPathWeight < Vertex_getDistance(dest)){
 		dest->toParent = target;
-		Vertex_updateAverage(dest, newPathWeight, newPathNumEdges);
+		Vertex_updateAverage(dest, newPathWeight+randomFloat(0.3), newPathNumEdges);
 	}
 }
 
@@ -303,8 +314,9 @@ float SkiMap_evaluateEdge(Edge target, uint8_t userPreferences){
 			score = score - 1.0;
 		}
 		else if(matchingFlags(i, target->diffRating, defineNegationZone(userPreferences))){
-			score = score + 0.5;
+			score = score + 0.8;
 		}
+
 	}
 	return score;
 }
