@@ -128,6 +128,19 @@ static void freeAllVertices(List remove){
 	free(remove);
 }
 
+char* SkiMap_processInput(SkiMap obj, uint8_t userPreferences){
+	char* path;
+	if (userPreferences == 128 || userPreferences == 255){
+		path = SkiMap_randomPathDown(obj);
+	}
+	else{
+		Vertex src = (Vertex)(List_getItem(obj->startPoints, 0)->data);
+		SkiMap_bellmanFord(obj, src, userPreferences);
+		path = SkiMap_stringifyPath(SkiMap_checkBFResults(obj));
+	}
+	return path;
+}
+
 Vertex SkiMap_searchVertex(SkiMap obj, char name[]){
 	assert(obj);
 	int size = List_numItems(obj->allVertices);

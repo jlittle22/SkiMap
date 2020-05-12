@@ -34,10 +34,12 @@ SkiMap SkiMap_new(char name[], char* vdata, char* edata);
 /* Free a SkiMap object */
 void SkiMap_free(SkiMap obj);
 
+char* SkiMap_processInput(SkiMap obj, uint8_t userPreferences);
+
 /* Search for a Vertex object in the SkiMap object */
 Vertex SkiMap_searchVertex(SkiMap obj, char name[]);
 
-/* Find a random path in a SkiMap object ... MARK FOR STATIC */
+/* Find a random path in a SkiMap object */
 char* SkiMap_randomPathDown(SkiMap obj);
 
 /* MARK FOR STATIC  */

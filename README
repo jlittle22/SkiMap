@@ -122,15 +122,31 @@ Ski Maps (SkiMap.h/SkiMap.c) *NEEDS WORK:
 	};
 
 Min Heaps (MinHeap.h/MinHeap.c):
-	(!)to be documented...
+	MinHeaps are standard dynamic arrays fitted with expansion when the current
+	array is full as well as recursive heapifications upon on deletion or 
+	insertion.
 
 --ALGORITHMS--------------------------------------------------------------------
 
 Bellman-Ford Algorithm:
-	(!)to be documented...
+	*https://en.wikipedia.org/wiki/Bellman%E2%80%93Ford_algorithm
+	My implementation of the Bellman-Ford algorithm is the same as documented
+	in the link above with the modification that instead of using path weights
+	to relax an edge, I use what the average path edge weight be versus what 
+	it would be without an inspected edge. This means that instead of
+	minimizing distance from the source, this algorithm minimizes the average
+	edge weight on the path. 
 
 SmallFloat (Float Compression by John Little):
-	(!)to be documented...
+	Compresses a standard IEEE Floating point value (which is 32 bits) into a 28
+	bit field with minimal loss of precision (accuracy was so high that it
+	couldn't be accurately represented as a percent even using double precision
+	floats). This conserves 4 bits of space (4 / 32 = 12.5% reduction) but in
+	practice actually saves 8 *bytes* due to the size of a Vertex object. A 
+	Vertex object (the object to which a Vertex points to) is presently 32 bytes
+	large, meaning that even the small additional use of memory that a new
+	float data member would occupy, would increase the structure size to 40
+	(accounting for struct padding). 
 
 --STRUCTURE---------------------------------------------------------------------
 		    Ski Map       <- Highest Level. Represents Graph structure.
