@@ -16,11 +16,16 @@ struct MinHeap{
 
 typedef struct MinHeap* MinHeap;
 
+/* Initialize a new MinHeap object */
 MinHeap MinHeap_new();
+
+/* Free a MinHeap object */
 void MinHeap_free(MinHeap);
+
+/* Insert a Vertex object into a MinHeap Object */
 void MinHeap_insert(MinHeap, Vertex);
-void MinHeap_upHeapify(Vertex* arr, unsigned index);
-void MinHeap_downHeapify(Vertex* arr, unsigned size, unsigned index);
+
+/* Extract the top element from the MinHeap Object */ 
 Vertex MinHeap_extractTop(MinHeap);
 
 #endif

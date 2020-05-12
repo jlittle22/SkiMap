@@ -2,9 +2,10 @@
 
 static void expand(MinHeap obj);
 static void swap(Vertex* arr, unsigned i, unsigned j);
+static void upHeapify(Vertex* arr, unsigned index);
+static void downHeapify(Vertex* arr, unsigned size, unsigned index);
 
 MinHeap MinHeap_new(){
-	fprintf(stderr, "HEAP STRUCT SIZE: %ld\n", HEAP_STRUCT_SIZE);
 	MinHeap new = (MinHeap)malloc(HEAP_STRUCT_SIZE);
 	nullCheck("ERROR:: at MinHeap_new. Malloc failed for MinHeap ptr.", new);
 	new->dataArray = (Vertex*)malloc(sizeof(Vertex) * INIT_CAPACITY);
@@ -29,7 +30,7 @@ void MinHeap_insert(MinHeap obj, Vertex insertMe){
 	}
 	obj->dataArray[obj->numElems] = insertMe;
 	obj->numElems = obj->numElems + 1;
-	MinHeap_upHeapify(obj->dataArray, obj->numElems-1);
+	upHeapify(obj->dataArray, obj->numElems-1);
 }
 
 static void expand(MinHeap obj){
@@ -46,19 +47,19 @@ static void expand(MinHeap obj){
 	free(temp);
 }
 
-void MinHeap_upHeapify(Vertex* arr, unsigned index){
-	nullCheck("ERROR:: at MinHeap_upHeapify. Array is NULL.", arr);
+static void upHeapify(Vertex* arr, unsigned index){
+	nullCheck("ERROR:: at upHeapify. Array is NULL.", arr);
 	int parent = ((int)index - 1)/2;
 	if (parent >= 0){
 		if (Vertex_getDistance(arr[parent]) > Vertex_getDistance(arr[index])){
 			swap(arr, parent, index);
-			MinHeap_upHeapify(arr, parent);
+			upHeapify(arr, parent);
 		}
 	}
 }
 
-void MinHeap_downHeapify(Vertex* arr, unsigned size, unsigned index){
-	nullCheck("ERROR:: at MinHeap_downHeapify. Arr is NULL.", arr);	
+static void downHeapify(Vertex* arr, unsigned size, unsigned index){
+	nullCheck("ERROR:: at downHeapify. Arr is NULL.", arr);	
 	unsigned root = index;
 	unsigned leftChild = (2*index)+1;
 	unsigned rightChild = (2*index)+2;
@@ -72,7 +73,7 @@ void MinHeap_downHeapify(Vertex* arr, unsigned size, unsigned index){
 
 	if(root != index){
 		swap(arr, index, root);
-		MinHeap_downHeapify(arr, size, root);
+		downHeapify(arr, size, root);
 	}
 }
 
@@ -89,7 +90,7 @@ Vertex MinHeap_extractTop(MinHeap obj){
 	swap(obj->dataArray, 0, obj->numElems-1);
 	Vertex item = obj->dataArray[obj->numElems-1];
 	obj->numElems = obj->numElems-1;
-	MinHeap_downHeapify(obj->dataArray, obj->numElems, 0);
+	downHeapify(obj->dataArray, obj->numElems, 0);
 	return item;
 }
 

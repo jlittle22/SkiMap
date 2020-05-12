@@ -2,12 +2,15 @@
 
 static void assignMtnName(SkiMap obj, char array[]);
 static unsigned randomNum(unsigned upperBound);
-static void randomPathDown_Helper(Vertex current, bool first);
+static void randomPathDown_Helper(Vertex current, bool first, List path);
 static bool visitedAll(int arr[], int size);
 static void freeAllVertices(List remove);
 static bool checkFlag(uint8_t word, unsigned bitLocation);
 static bool matchingFlags(int i, uint8_t field1, uint8_t field2);
 static uint8_t defineNegationZone(uint8_t userPreferences);
+static void readStringFile(SkiMap obj, char* data, void (*processLine)(SkiMap, char*));
+static void loadVertices(SkiMap obj, char* vdata);
+static void loadTrails(SkiMap obj, char* edata);
 
 static void loadVertex(SkiMap obj, char* line){
 	char* token = strtok(line, " ");
@@ -33,17 +36,17 @@ static void loadVertex(SkiMap obj, char* line){
 
 }
 
-///////////// fscanf(verts, "%s %hhu\n", stringName, &class) == 2
-void SkiMap_loadVertices(SkiMap obj, char* vdata){
-	assert(obj);
+static void readStringFile(SkiMap obj, char* data, void (*processLine)(SkiMap, char*)){
+	nullCheck("ERROR:: at SkiMap_readStringFile. Obj is NULL.", obj);
+	nullCheck("ERROR:: at SkiMap_readStringFile. Data is NULL.", data);
 	char line[MAX_EDGE_LINE_SIZE];
 	memset(line, 0, MAX_EDGE_LINE_SIZE);
 	char curr= 'A';
 	int index = 0;
-	while (curr != '\0'){//(char)255){
-		curr = (*vdata);
+	while (curr != '\0'){
+		curr = (*data);
 		if(curr == '\n'){
-			loadVertex(obj, line);
+			processLine(obj, line);
 			index = 0;
 			memset(line, 0, MAX_EDGE_LINE_SIZE);
 		}
@@ -51,9 +54,13 @@ void SkiMap_loadVertices(SkiMap obj, char* vdata){
 			line[index] = curr;
 			index++;
 		}
-		vdata++;
-	}	
-	
+		data++;
+	}
+}
+
+static void loadVertices(SkiMap obj, char* vdata){
+	nullCheck("ERROR:: at loadVertices. Obj is NULL.", obj);
+	readStringFile(obj, vdata, loadVertex);
 }
 
 static void loadTrail(SkiMap obj, char* line){
@@ -87,36 +94,18 @@ static void loadTrail(SkiMap obj, char* line){
 	Vertex_addEdge(source, new);
 }
 
-////////////
-void SkiMap_loadTrails(SkiMap obj, char* edata){
-	assert(obj);
-	char line[MAX_EDGE_LINE_SIZE];
-	memset(line, 0, MAX_EDGE_LINE_SIZE);
-	char curr = 'A';
-	int index = 0;
-	while (curr != '\0'){ //(char)255){
-		curr = (*edata);
-		if(curr == '\n'){
-			loadTrail(obj, line);
-			index = 0;
-			memset(line, 0, MAX_EDGE_LINE_SIZE);
-		}
-		else {
-			line[index] = curr;
-			index++;
-		}
-		edata++;
-	}
+static void loadTrails(SkiMap obj, char* edata){
+	nullCheck("ERROR:: at loadTrails. Obj is NULL.", obj);
+	readStringFile(obj, edata, loadTrail);
 }
 
-/////////////
 SkiMap SkiMap_new(char name[], char* vdata, char* edata){
 	SkiMap obj = malloc(SKI_MAP_SIZE);
 	obj->allVertices = List_new();
 	obj->startPoints = List_new();
 	assignMtnName(obj, name);
-    SkiMap_loadVertices(obj, vdata);
-    SkiMap_loadTrails(obj, edata);
+    loadVertices(obj, vdata);
+    loadTrails(obj, edata);
     return obj;
 }
 
@@ -153,18 +142,18 @@ Vertex SkiMap_searchVertex(SkiMap obj, char name[]){
 	return NULL;
 }
 
-void SkiMap_randomPath(SkiMap obj){
-	(void)obj;
-	fprintf(stderr, "%u\n", randomNum(10));
-}
-
-void SkiMap_randomPathDown(SkiMap obj){
+char* SkiMap_randomPathDown(SkiMap obj){
 	unsigned numStarts = (unsigned)List_numItems(obj->startPoints);
 	Vertex start = (Vertex)List_getItem(obj->startPoints, randomNum(numStarts))->data;
-	randomPathDown_Helper(start, true);
+	List path = List_new();
+	randomPathDown_Helper(start, true, path);
+	path = List_reverseList(path);
+	char* pathString = SkiMap_stringifyPath(path);
+	return pathString;
 }
 
-static void randomPathDown_Helper(Vertex current, bool first){
+
+static void randomPathDown_Helper(Vertex current, bool first, List path){
 	if (!first){
 		Vertex_setDiscovered(current, true);
 	}
@@ -177,12 +166,11 @@ static void randomPathDown_Helper(Vertex current, bool first){
 		Edge checkEdge = Vertex_getEdge(current, checkIndex);
 		Vertex checkVert = Edge_getDest(checkEdge);
 		if (!Vertex_isDiscovered(checkVert)){
-			printf("%s -> ", checkEdge->edgeName);
+			List_insert(path, checkEdge);
 			if(Vertex_getClass(checkVert) == ONLOAD && first == false){
-				printf("%s\n", checkVert->vertexName);
 				break; 
 			}
-			randomPathDown_Helper(checkVert, false);
+			randomPathDown_Helper(checkVert, false, path);
 			break;
 		}
 	}
@@ -249,7 +237,6 @@ List SkiMap_checkBFResults(SkiMap obj){
 
 	int j = 0;
 	Vertex bestEnd = (Vertex)(List_getItem(obj->startPoints, minIndex)->data);
-	float bestDistance = Vertex_getDistance(bestEnd);
 	List bestPath = List_new();
 	while(bestEnd != NULL){
 		if(Vertex_getClass(bestEnd) == ONLOAD && j > 0){
@@ -260,28 +247,7 @@ List SkiMap_checkBFResults(SkiMap obj){
 		bestEnd = currEdge->source;
 		j++;
 	}
-	fprintf(stderr, "VERTEX: %s Weight: %f\n", bestEnd->vertexName, bestDistance);
-	List_print(bestPath->list);
 	return bestPath;
-	/*for(unsigned i = 0; i < numVerts; i++){
-		Vertex curr = (Vertex)(List_getItem(obj->startPoints, i)->data);
-		Vertex temp = curr;
-		List path = List_new();
-		int j = 0; 
-		while(curr != NULL){
-			if(Vertex_getClass(curr) == ONLOAD && j > 0){
-				break;
-			}
-			Edge currEdge = curr->toParent;
-			List_insert(path, currEdge);
-			curr = currEdge->source;
-			j++;
-		}
-		fprintf(stderr, "--Path %u--\n", i);
-		fprintf(stderr, "VERTEX: %s Weight: %f\n",temp->vertexName, Vertex_getDistance(temp));
-		List_print(path->list);
-		List_partialFree(path);
-	}*/
 }
 
 void SkiMap_bellmanFord(SkiMap obj, Vertex source, uint8_t userPreferences){

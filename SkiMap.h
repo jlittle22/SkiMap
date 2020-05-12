@@ -28,16 +28,30 @@ struct SkiMap{
 
 typedef struct SkiMap* SkiMap;
 
+/* Initialize a new SkiMap object */
 SkiMap SkiMap_new(char name[], char* vdata, char* edata);
+
+/* Free a SkiMap object */
 void SkiMap_free(SkiMap obj);
-void SkiMap_loadVertices(SkiMap obj, char* vdata);
-void SkiMap_loadTrails(SkiMap obj, char* edata);
+
+/* Search for a Vertex object in the SkiMap object */
 Vertex SkiMap_searchVertex(SkiMap obj, char name[]);
-void SkiMap_randomPathDown(SkiMap obj);
+
+/* Find a random path in a SkiMap object ... MARK FOR STATIC */
+char* SkiMap_randomPathDown(SkiMap obj);
+
+/* MARK FOR STATIC  */
 float SkiMap_evaluateEdge(Edge target, uint8_t userPreferences);
+
+/* Relaxes the Edge target. */
 void SkiMap_relaxEdge(Vertex source, Edge target, uint8_t userPreferences);
+
+/* Run a modified Bellman Ford Single Source Shortest Path search on a SkiMap object. */
 void SkiMap_bellmanFord(SkiMap obj, Vertex source, uint8_t userPreferences);
+
+/* Collected and report the result of a Bellman Ford search in a List of Edges */
 List SkiMap_checkBFResults(SkiMap obj);
-void SkiMap_driver();
+
+/* Converts a List of Edges representing a path into a string */
 char* SkiMap_stringifyPath(List path);
 #endif

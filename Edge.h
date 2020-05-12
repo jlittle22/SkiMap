@@ -43,11 +43,15 @@ struct Edge{
     Vertex source;  
 };
 
+/* Initializes an new Edge object */
 Edge Edge_new(char name[], uint8_t array[], int numFlags, Vertex dest, Vertex src);
+
+/* Retrieve the destination Vertex of an Edge object */
 Vertex Edge_getDest(Edge obj);
-///////////////
-// Edge Bits //
-///////////////
+
+/* Returns TRUE if an Edge object is rated as type (see Diff Ratings above) */
 bool Edge_is(Edge obj, int type);
+
+/* NOTE: Edge's are automatically freed in List_free(List obj). */
 
 #endif

@@ -2,15 +2,17 @@
 #include "Vertex.h"
 
 static void indexRange(char error[], List obj, int index);
+static void LinkedList_free(LinkedList list);
+static LinkedList LinkedList_new();
 
-LinkedList LinkedList_new(){
+static LinkedList LinkedList_new(){
 	LinkedList new = (LinkedList)malloc(LINKED_SIZE);
 	nullCheck("ERROR: at Malloc in LinkedList_new()", new);
 	new->front = NULL;
 	return new;
 }
 
-void LinkedList_free(LinkedList list){
+static void LinkedList_free(LinkedList list){
 	assert(list);
 	Node* current = list->front; 
 	Node* temp = NULL;
@@ -105,3 +107,12 @@ static void indexRange(char error[], List obj, int index){
 	}
 }
 
+List List_reverseList(List obj){
+	int numItems = List_numItems(obj);
+	List reversed = List_new();
+	for (int i = 0; i < numItems; i++){
+		List_insert(reversed, List_getItem(obj,i)->data);
+	}
+	List_partialFree(obj);
+	return reversed;
+}

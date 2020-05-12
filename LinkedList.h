@@ -39,16 +39,29 @@ typedef struct LinkedListClass* List;
 #define LINKED_SIZE sizeof(struct LinkedList)
 #define LIST_SIZE sizeof(struct LinkedListClass)
 
-
-LinkedList LinkedList_new();
-void LinkedList_free(LinkedList list);
+/* Frees a List objected but NOT its contents */
 void List_partialFree(List list);
+
+/* Frees a List object */
 List List_new();
+
+/* Insert an element into a List */
 void List_insert(List list, void* data);
+
+/* Print a List - FOR TESTING PURPOSES ONLY */
 void List_print(LinkedList);
+
+/* Completely frees a List object*/
 void List_free(List removeMe);
+
+/* Retrieves an indexed Node of a List */
 Node* List_getItem(List, int);
+
+/* Gets the number of items in a List */
 int List_numItems(List);
+
+/* Returns a new List with elements in reverse orders. Frees memory from old list */
+List List_reverseList(List obj);
 
 #endif
 

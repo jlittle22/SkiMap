@@ -18,9 +18,10 @@ Vertex Vertex_new(char name[], uint32_t classValue){
 	assignVertName(new, name);
 	new->data = setDiffRate(new->data, classValue);
 	Vertex_setDistance(new, INFINITE_DIST);
+	Vertex_setDiscovered(new, false);
 	new->edges = List_new();
 	new->toParent = NULL;
-	new->edgesInPath = 0; 				
+	new->edgesInPath = 0; 	
 	return new;
 }
 
@@ -95,15 +96,6 @@ float Vertex_getDistance(Vertex obj){
 	return getFDistance(obj);
 }
 
-bool Vertex_isInfinite(Vertex obj){
-	if (Vertex_getDistance(obj) == INFINITE_DIST){
-		return true;
-	}
-	else{
-		return false;
-	}
-}
-
 uint8_t Vertex_getNumEdgesInPath(Vertex obj){
 	nullCheck("ERROR:: at Vertex_getNumEdgesInPath. Obj is NULL.", obj);
 	return obj->edgesInPath;
@@ -174,7 +166,8 @@ static uint32_t setDiffRate(uint32_t word, uint32_t rating){
 }
 
 static bool checkFlag(uint32_t word, int bitLocation){
-	return (word >> bitLocation);
+	word = word & ONE_BIT_AT(bitLocation);
+	return word;
 }
 
 static uint32_t getDiffRate(uint32_t word){
