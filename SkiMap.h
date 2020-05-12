@@ -12,6 +12,7 @@
 
 #include <time.h>
 #include "Vertex.h"
+#include "Path.h"
 
 #define MTN_NAME_SIZE 14
 #define MAX_EDGE_LINE_SIZE 100
@@ -46,10 +47,10 @@ char* SkiMap_randomPathDown(SkiMap obj);
 float SkiMap_evaluateEdge(Edge target, uint8_t userPreferences);
 
 /* Relaxes the Edge target. */
-void SkiMap_relaxEdge(Vertex source, Edge target, uint8_t userPreferences);
+void SkiMap_relaxEdge(Vertex source, Edge target, uint8_t userPreferences, List paths);
 
 /* Run a modified Bellman Ford Single Source Shortest Path search on a SkiMap object. */
-void SkiMap_bellmanFord(SkiMap obj, Vertex source, uint8_t userPreferences);
+List SkiMap_bellmanFord(SkiMap obj, Vertex source, uint8_t userPreferences);
 
 /* Collected and report the result of a Bellman Ford search in a List of Edges */
 List SkiMap_checkBFResults(SkiMap obj);

@@ -128,6 +128,21 @@ static void freeAllVertices(List remove){
 	free(remove);
 }
 
+static Path List_to_Path(List paths){
+	Path final = Path_new();
+	int numPaths = List_numItems(paths);
+	for (int i = 0; i < numPaths; i++){
+		Path currPath = (Path)(List_getItem(paths, i)->data);
+		float currScore = currPath->score;
+		char stringScore[20];
+		gcvt (currScore, 7, stringScore);
+		char* pathString = currPath->string;
+		Path_insert(final, stringScore, '@');
+		Path_insert(final, pathString, '>');
+	}
+	return final;
+}
+
 char* SkiMap_processInput(SkiMap obj, uint8_t userPreferences){
 	char* path;
 	if (userPreferences == 128 || userPreferences == 255){
@@ -135,8 +150,14 @@ char* SkiMap_processInput(SkiMap obj, uint8_t userPreferences){
 	}
 	else{
 		Vertex src = (Vertex)(List_getItem(obj->startPoints, 0)->data);
-		SkiMap_bellmanFord(obj, src, userPreferences);
-		path = SkiMap_stringifyPath(SkiMap_checkBFResults(obj));
+		List paths = SkiMap_bellmanFord(obj, src, userPreferences);
+
+		/*for (int i = 0; i < List_numItems(paths); i++){
+			Path check = (Path)(List_getItem(paths, i)->data);
+			fprintf(stderr, "Path %d Score %f: %s\n",i, check->score, check->string);
+		}*/
+		path = List_to_Path(paths)->string;
+		//path = SkiMap_stringifyPath(SkiMap_checkBFResults(obj));
 	}
 	return path;
 }
@@ -263,9 +284,10 @@ List SkiMap_checkBFResults(SkiMap obj){
 	return bestPath;
 }
 
-void SkiMap_bellmanFord(SkiMap obj, Vertex source, uint8_t userPreferences){
+List SkiMap_bellmanFord(SkiMap obj, Vertex source, uint8_t userPreferences){
+	List paths = List_new();
 	Vertex_setDistance(source, 0);
-	source->toParent = (void*)0x0;
+	source->toParent = NULL;
 	unsigned numVerts = (unsigned)List_numItems(obj->allVertices);
 	for(unsigned k = 0; k < numVerts; k++){
 		if (k == 1){
@@ -276,13 +298,60 @@ void SkiMap_bellmanFord(SkiMap obj, Vertex source, uint8_t userPreferences){
 			unsigned numEdges = (unsigned)List_numItems(test->edges);
 			for(unsigned j = 0; j < numEdges; j++){
 				Edge currEdge = (Edge)(List_getItem(test->edges, j)->data);
-				SkiMap_relaxEdge(test, currEdge, userPreferences);
+				SkiMap_relaxEdge(test, currEdge, userPreferences, paths);
+			}
+		}
+	}
+	return paths;
+}
+
+static bool getUpPath(Vertex end, Path path){
+	if (Vertex_isDiscovered(end) == true){
+		Vertex_setDiscovered(end, false);
+		if (Vertex_getClass(end) == ONLOAD){
+			return true;
+		}
+		return false;
+	}
+	Vertex_setDiscovered(end, true);
+	Path_insert(path, end->toParent->edgeName, ' ');
+	bool value = getUpPath(end->toParent->source, path);
+	Vertex_setDiscovered(end, false);
+	return value;
+}
+
+Path pathInList(List paths, Path newGuy){
+	int numPaths = List_numItems(paths);
+	for (int i = 0; i < numPaths; i++){
+		Path check = (Path)(List_getItem(paths, i)->data);
+		if (strcmp(newGuy->string, check->string) == 0){
+			return check;
+		}
+	}
+	return NULL;
+}
+
+static void extractPath(List paths, Vertex curr){
+	float currScore = Vertex_getDistance(curr);
+	if (currScore >= 8.0f){
+		return;
+	}
+	Path test = Path_new();
+	if (getUpPath(curr, test) == true){
+		Path copy = pathInList(paths, test);
+		if(copy == NULL){
+			test->score = currScore;
+			List_insert(paths, test);
+		}
+		else {
+			if(currScore < copy->score){
+				copy->score = currScore;
 			}
 		}
 	}
 }
 
-void SkiMap_relaxEdge(Vertex source, Edge target, uint8_t userPreferences){
+void SkiMap_relaxEdge(Vertex source, Edge target, uint8_t userPreferences, List paths){
 	if(Vertex_getDistance(source) == INFINITE_DIST){
 		return;
 	}
@@ -292,6 +361,9 @@ void SkiMap_relaxEdge(Vertex source, Edge target, uint8_t userPreferences){
 	if(newPathWeight < Vertex_getDistance(dest)){
 		dest->toParent = target;
 		Vertex_updateAverage(dest, newPathWeight, newPathNumEdges);
+	}
+	if(Vertex_getClass(dest) == ONLOAD){
+		extractPath(paths, dest);
 	}
 }
 
@@ -305,6 +377,7 @@ float SkiMap_evaluateEdge(Edge target, uint8_t userPreferences){
 		else if(matchingFlags(i, target->diffRating, defineNegationZone(userPreferences))){
 			score = score + 0.5;
 		}
+
 	}
 	return score;
 }
@@ -312,7 +385,7 @@ float SkiMap_evaluateEdge(Edge target, uint8_t userPreferences){
 static uint8_t defineNegationZone(uint8_t userPreferences){
 	uint8_t diffMask = ONE_BIT_AT((DOUBLE+1))-1;
 	int max = -1;
-	for (int i = 0; i < DOUBLE; i++){
+	for (int i = 0; i <= DOUBLE; i++){
 		if (checkFlag(userPreferences, i) == true){
 			max = i;
 		}
