@@ -3,7 +3,7 @@
 char* run(uint8_t userP, char* edata, char* vdata);
 
 int main(){//////////////
-	uint8_t userP = 255; // <- Edit me! User preferences are a byte. 
+	uint8_t userP = 10; // <- Edit me! User preferences are a byte. 
 ///////////////////////// Example: 00000101 is GREEN and BLACKS (0th and 2nd bits are flagged.)
 	//for (unsigned i = 0; i < 256; i++){
 		//userP = i;

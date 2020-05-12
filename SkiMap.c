@@ -302,7 +302,7 @@ void SkiMap_relaxEdge(Vertex source, Edge target, uint8_t userPreferences){
 	uint8_t newPathNumEdges = Vertex_getNumEdgesInPath(source) + 1;
 	if(newPathWeight < Vertex_getDistance(dest)){
 		dest->toParent = target;
-		Vertex_updateAverage(dest, newPathWeight+randomFloat(0.3), newPathNumEdges);
+		Vertex_updateAverage(dest, newPathWeight+randomFloat(BELLMAN_ERROR), newPathNumEdges);
 	}
 }
 
@@ -314,7 +314,7 @@ float SkiMap_evaluateEdge(Edge target, uint8_t userPreferences){
 			score = score - 1.0;
 		}
 		else if(matchingFlags(i, target->diffRating, defineNegationZone(userPreferences))){
-			score = score + 0.8;
+			score = score + 0.5 + BELLMAN_ERROR;
 		}
 
 	}
@@ -324,7 +324,7 @@ float SkiMap_evaluateEdge(Edge target, uint8_t userPreferences){
 static uint8_t defineNegationZone(uint8_t userPreferences){
 	uint8_t diffMask = ONE_BIT_AT((DOUBLE+1))-1;
 	int max = -1;
-	for (int i = 0; i < DOUBLE; i++){
+	for (int i = 0; i <= DOUBLE; i++){
 		if (checkFlag(userPreferences, i) == true){
 			max = i;
 		}

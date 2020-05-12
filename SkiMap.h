@@ -17,6 +17,7 @@
 #define MAX_EDGE_LINE_SIZE 100
 #define SIZE_OF_WORD 8
 #define SIZE_OF_WORD_F 8.0F
+#define BELLMAN_ERROR 0.3F
 
 struct SkiMap{
 	char mtnName[MTN_NAME_SIZE];
