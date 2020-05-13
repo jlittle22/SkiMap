@@ -2,6 +2,7 @@
 
 char* run(uint8_t userP, char* edata, char* vdata);
 
+/* main() for is TESTING only! */
 int main(){//////////////
 	uint8_t userP = 10; // <- Edit me! User preferences are a byte. 
 ///////////////////////// Example: 00000101 is GREEN and BLACKS (0th and 2nd bits are flagged.)
@@ -12,11 +13,15 @@ int main(){//////////////
 		free(path);
 }
 
+/* run() is the actual driver that the JNI entry point calls.
+   run() takes a bit-packed byte of user preferences as well as
+   two strings representing the edge data and vertex data 
+   following the format specified in the README file. */
 char* run(uint8_t userP, char* edata, char* vdata){
 	char* path;
 	srand(time(NULL));
-	SkiMap mtn = SkiMap_new("JakesMtn", vdata, edata);
-    path = SkiMap_processInput(mtn, userP);
-	SkiMap_free(mtn);
-	return path;
+	SkiMap mtn = SkiMap_new("JakesMtn", vdata, edata); // make new SkiMap and init.
+    path = SkiMap_processInput(mtn, userP); // compute path 
+	SkiMap_free(mtn); // free memory 
+	return path; // (!) NOTE: path points to heap memory that must be freed in the JNI entry.
 }

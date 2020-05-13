@@ -1,11 +1,10 @@
 #ifndef SMALLFLOAT_H
 #define SMALLFLOAT_H
 
+#include "Errors.h"
 #include <math.h>
 #include <stdbool.h>
 #include <inttypes.h>
-
-#include "Errors.h"
 
 #define SF_BITS 28
 #define EXP_BITS 3 

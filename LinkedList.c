@@ -5,6 +5,7 @@ static void indexRange(char error[], List obj, int index);
 static void LinkedList_free(LinkedList list);
 static LinkedList LinkedList_new();
 
+/* Create a new LinkedList object */
 static LinkedList LinkedList_new(){
 	LinkedList new = (LinkedList)malloc(LINKED_SIZE);
 	nullCheck("ERROR: at Malloc in LinkedList_new()", new);
@@ -12,6 +13,7 @@ static LinkedList LinkedList_new(){
 	return new;
 }
 
+/* Free a LinkedList object */
 static void LinkedList_free(LinkedList list){
 	assert(list);
 	Node* current = list->front; 
@@ -26,6 +28,7 @@ static void LinkedList_free(LinkedList list){
 	}
 }
 
+/* Free the List obj, but not the contents of the LinkedList */
 void List_partialFree(List obj){
 	assert(obj);
 	LinkedList objList = obj->list;
@@ -41,6 +44,7 @@ void List_partialFree(List obj){
 	free(obj);
 }
 
+/* Insert an object into a List object */
 void List_insert(List obj, void* newData){
 	assert(newData);
 	assert(obj);
@@ -53,6 +57,7 @@ void List_insert(List obj, void* newData){
 	obj->numElems++;
 }
 
+/* TESTING PURPOSES ONLY: Print the contents of a List (assume it stores vertices) */
 void List_print(LinkedList list){
 	assert(list);
 	Node * current = list->front;
@@ -63,6 +68,7 @@ void List_print(LinkedList list){
 	}
 }
 
+/* Create a new List object */
 List List_new(){
 	List new = (List)malloc(LIST_SIZE);
 	nullCheck("ERROR: at Malloc in List_new()", new);	
@@ -71,6 +77,7 @@ List List_new(){
 	return new;
 }
 
+/* Free a List object */
 void List_free(List removeMe){
 	assert(removeMe);
 	assert(removeMe);
@@ -79,6 +86,7 @@ void List_free(List removeMe){
 	free(removeMe);
 }
 
+/* Retrieve the index'th Node from a List object */
 Node* List_getItem(List obj, int index){
 	assert(obj);
 	indexRange("ERROR: at List_getItem :: index out of range",obj, index);
@@ -93,12 +101,13 @@ Node* List_getItem(List obj, int index){
 
 }
 
+/* Retrieves the number of items in a List obj */
 int List_numItems(List obj){
 	assert(obj);
 	return obj->numElems;
 }
 
-
+/* Ensure the given index less than the number of elems in the List obj */
 static void indexRange(char error[], List obj, int index){
 	assert(obj);
 	if (index >= obj->numElems || index < 0){
@@ -107,6 +116,7 @@ static void indexRange(char error[], List obj, int index){
 	}
 }
 
+/* Reverse the nodes of a List obj by inserting them into another List obj and returning it */
 List List_reverseList(List obj){
 	int numItems = List_numItems(obj);
 	List reversed = List_new();
