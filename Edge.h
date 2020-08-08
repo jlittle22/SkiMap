@@ -36,7 +36,7 @@ typedef struct Edge* Edge;
 
 typedef struct Vertex* Vertex;
 
-struct Edge{
+struct Edge {
 	char edgeName[EDGE_NAME_CHAR_COUNT];
     uint8_t diffRating;
     Vertex destination;

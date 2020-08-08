@@ -21,14 +21,14 @@
 #define STD_BIAS 127
 #define ONE_AT(n) (((uint32_t)0x1) << n)
 
-struct SmallFloat{
+struct SmallFloat {
 	uint32_t data;  // Can range between 0 and 31 inclusively
 };
 
 #define FLOAT_SIZE sizeof(struct SmallFloat)
 typedef struct SmallFloat* SmallFloat; 
 
-union Convert{
+union Convert {
 	uint32_t bits;
 	float value;
 };

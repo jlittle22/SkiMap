@@ -6,7 +6,7 @@
 
 #define INIT_CAPACITY 10
 
-struct MinHeap{
+struct MinHeap {
 	Vertex* dataArray;
 	unsigned numElems;
 	unsigned capacity;

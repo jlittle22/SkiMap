@@ -35,7 +35,7 @@
 #define DISTANCE_LSB (DISC_FLAG + 1)  // presently, this leaves 1 unused bit on the far left of word. Alternative: DISC_FLAG + 2 
 #define INFINITE_DIST 16.0F  // ((uint32_t)((0x0-1)>>(DISTANCE_LSB)))
 
-struct Vertex{
+struct Vertex {
 	char vertexName[VERT_NAME_CHAR_COUNT]; // 11
 	uint8_t edgesInPath; // 1
 	uint32_t data; // 4 

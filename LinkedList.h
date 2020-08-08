@@ -18,18 +18,18 @@
 
 typedef struct Node Node; 
 
-typedef struct Node{
+typedef struct Node {
 	void * data; 
 	Node * next; 
 } Node;
 
-struct LinkedList{
+struct LinkedList {
     Node * front;
 };
 
 typedef struct LinkedList* LinkedList; 
 
-struct LinkedListClass{
+struct LinkedListClass {
 	LinkedList list;
 	int numElems; 
 };

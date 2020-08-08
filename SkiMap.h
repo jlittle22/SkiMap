@@ -19,7 +19,7 @@
 #define SIZE_OF_WORD_F 8.0F
 #define BELLMAN_ERROR 0.0F
 
-struct SkiMap{
+struct SkiMap {
 	char mtnName[MTN_NAME_SIZE];
 	List allVertices; 
 	List startPoints;
