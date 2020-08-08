@@ -137,16 +137,13 @@ Bellman-Ford Algorithm:
 
 SmallFloat (Float Packing by John Little):
 	Packs a standard IEEE Floating point value (which is 32 bits) into a 28
-	bit field with minimal loss of precision (accuracy was so high that it
-	couldn't be accurately represented as a percent even using double precision
-	floats). This conserves 4 bits of space (4 / 32 = 12.5% reduction) but in
-	practice actually saves 8 *bytes* due to the size of a Vertex object. This
-	this is because we use 3 of the 4 saved bits to represent other values
-	associated with a Vertex object, instead of adding a new struct data member. A  
-	Vertex object (the object to which a Vertex points to) is presently 32 bytes
-	large, meaning that even the small additional use of memory that a new
-	data member would occupy, would increase the structure size to 40 bytes
-	(accounting for struct padding). 
+	bit field with zero loss of precision. This conserves 4 bits of space 
+	(4 / 32 = 12.5% reduction) but in practice actually saves 8 *bytes* due 
+	to the size of a Vertex object. This is because we use 3 of the 4 saved bits to 
+	represent other values associated with a Vertex object, instead of adding a new 
+	struct data member to do so. A Vertex object is presently 32 bytes large, 
+	meaning that even the small additional use of memory that a new data member 
+	would occupy, would increase the structure size to 40 bytes (accounting for struct padding). 
 
 --STRUCTURE---------------------------------------------------------------------
 		    Ski Map       <- Highest Level. Represents Graph structure.
