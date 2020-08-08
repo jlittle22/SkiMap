@@ -145,7 +145,7 @@ SmallFloat (Float Packing by John Little):
 	associated with a Vertex object, instead of adding a new struct data member. A  
 	Vertex object (the object to which a Vertex points to) is presently 32 bytes
 	large, meaning that even the small additional use of memory that a new
-	float data member would occupy, would increase the structure size to 40
+	data member would occupy, would increase the structure size to 40 bytes
 	(accounting for struct padding). 
 
 --STRUCTURE---------------------------------------------------------------------
