@@ -41,7 +41,6 @@ struct Vertex {
 	uint32_t data; // 4 
 	List edges;   // 8 
 	Edge toParent; // 8
-	// uint8_t test; <-- this hypothetical field is not necessarily to store vertex data because of SmallFloat!
 }; 
 
 // NOTE: 4 most significant bits of a SmallFloat object are unused!! Use them for 
