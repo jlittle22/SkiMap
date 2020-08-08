@@ -9,9 +9,7 @@
 ***********************************
 * README file for SkiMap Project  *
 * John Little                     *
-*                                 *
-* Also first Vim-edited file lol. *
-*                                 *
+* Back-end C implementation       *
 ***********************************
 
 (!)STILL IN DEVELOPMENT(!)
@@ -55,9 +53,9 @@ Edges (Edge.h/Edge.c):
 	black diamond, blue square, glades, moguls, etc).
 
 	struct Edge{
-		char edgeName[EDGE_NAME_CHAR_COUNT];
-    	uint8_t diffRating;
-    	Vertex destination;  
+	    char edgeName[EDGE_NAME_CHAR_COUNT];
+    	    uint8_t diffRating;
+    	    Vertex destination;  
 	};
 
 
@@ -137,12 +135,14 @@ Bellman-Ford Algorithm:
 	minimizing distance from the source, this algorithm minimizes the average
 	edge weight on the path. 
 
-SmallFloat (Float Compression by John Little):
-	Compresses a standard IEEE Floating point value (which is 32 bits) into a 28
+SmallFloat (Float Packing by John Little):
+	Packs a standard IEEE Floating point value (which is 32 bits) into a 28
 	bit field with minimal loss of precision (accuracy was so high that it
 	couldn't be accurately represented as a percent even using double precision
 	floats). This conserves 4 bits of space (4 / 32 = 12.5% reduction) but in
-	practice actually saves 8 *bytes* due to the size of a Vertex object. A 
+	practice actually saves 8 *bytes* due to the size of a Vertex object. This
+	this is because we use 3 of the 4 saved bits to represent other values
+	associated with a Vertex object, instead of adding a new struct data member. A  
 	Vertex object (the object to which a Vertex points to) is presently 32 bytes
 	large, meaning that even the small additional use of memory that a new
 	float data member would occupy, would increase the structure size to 40
