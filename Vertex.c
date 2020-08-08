@@ -21,7 +21,7 @@ Vertex Vertex_new(char name[], uint32_t classValue){
 	Vertex_setDiscovered(new, false);
 	new->edges = List_new();
 	new->toParent = NULL;
-	new->edgesInPath = 0; 	
+	new->edgesInPath = 0;
 	return new;
 }
 
@@ -123,7 +123,9 @@ static void setFDistance(Vertex obj, float input){
 	SmallFloat compressor = SmallFloat_FtoSF(input);
 	uint32_t compressed = SmallFloat_getData(compressor);
 	SmallFloat_free(compressor);
+	fprintf(stderr, "compressed: %x\n", compressed);
 	compressed = compressed << DISTANCE_LSB;
+	fprintf(stderr, "compressed shifted: %x\n", compressed);
 	uint32_t clearMask = ONE_BIT_AT(DISTANCE_LSB)-1;
 	clearMask = clearMask & obj->data;
 	compressed = compressed | clearMask;

@@ -17,7 +17,7 @@
 #include "Errors.h"
 
 #define EDGE_NAME_CHAR_COUNT 15
-#define ONE_BIT_AT(n) ((uint8_t)0x1 << n)
+#define ONE_BIT_AT(n) ((uint32_t)0x1 << n)
 #define EDGE_SIZE sizeof(struct Edge)
 typedef struct Edge* Edge;
 

@@ -22,7 +22,7 @@
 #define ONE_AT(n) (((uint32_t)0x1) << n)
 
 struct SmallFloat{
-	uint32_t data; 
+	uint32_t data;  // Can range between 0 and 31 inclusively
 };
 
 #define FLOAT_SIZE sizeof(struct SmallFloat)
