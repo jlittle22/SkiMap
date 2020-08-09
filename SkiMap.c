@@ -13,6 +13,7 @@ static void loadVertices(SkiMap obj, char* vdata);
 static void loadTrails(SkiMap obj, char* edata);
 static float randomFloat(float magnitude);
 
+/* Creates a new vertex based on the data in line and adds it to the SkiMap */
 static void loadVertex(SkiMap obj, char* line) {
 	char* token = strtok(line, " ");
 	char* vertexName;
@@ -36,6 +37,11 @@ static void loadVertex(SkiMap obj, char* line) {
 
 }
 
+/* purpose: reads a file containing string data (either representing edges or vertices)
+ * obj: the SkiMap object which we will add the edge/vertex objects to
+ * data: the data stored in a char array
+ * processLine: a function pointer used to process either a Vertex or Edge, depending on the context
+ */
 static void readStringFile(SkiMap obj, char* data, void (*processLine)(SkiMap, char*)) {
 	nullCheck("ERROR:: at SkiMap_readStringFile. Obj is NULL.", obj);
 	nullCheck("ERROR:: at SkiMap_readStringFile. Data is NULL.", data);
@@ -57,11 +63,13 @@ static void readStringFile(SkiMap obj, char* data, void (*processLine)(SkiMap, c
 	}
 }
 
+/* Loads vertices into the SkiMap from vdata */
 static void loadVertices(SkiMap obj, char* vdata) {
 	nullCheck("ERROR:: at loadVertices. Obj is NULL.", obj);
 	readStringFile(obj, vdata, loadVertex);
 }
 
+/* Loads an edge (trail) into a SkiMap object */
 static void loadTrail(SkiMap obj, char* line) {
 	char* token = strtok(line, " ");
 	char* originVert; 
@@ -90,6 +98,7 @@ static void loadTrail(SkiMap obj, char* line) {
 	Vertex_addEdge(source, new);
 }
 
+/* Loads all trails into a SkiMap object from edata */
 static void loadTrails(SkiMap obj, char* edata) {
 	nullCheck("ERROR:: at loadTrails. Obj is NULL.", obj);
 	readStringFile(obj, edata, loadTrail);
