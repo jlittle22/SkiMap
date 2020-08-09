@@ -1,12 +1,3 @@
-//     What is this module?     //
-//------------------------------//
-// This is basically a custom   //
-// graph interface. It's        //
-// explicitly for this project  //
-// and where we need to do most //
-// of the buildig... path       //
-// finding.                     //
-//////////////////////////////////
 #ifndef SKIMAP_H
 #define SKIMAP_H
 
