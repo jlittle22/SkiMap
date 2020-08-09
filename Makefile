@@ -1,14 +1,14 @@
 CC = gcc # The compiler being used
 
 # Updating include path. 
-#IFLAGS = -I/h/jlittl04/comp/Projects/Sources/
+# IFLAGS = -I/h/jlittl04/comp/Projects/Sources/
 
 
 CFLAGS = -g -Wall -Werror -Wextra -pedantic # $(IFLAGS)
-#make sure you add wError 
+# make sure you add wError 
 
-#source code path
-#VPATH=/h/jlittl04/comp/Projects/Sources/
+# source code path
+# VPATH=/h/jlittl04/comp/Projects/Sources/
 
 
 INCLUDES = $(shell echo *.h)
