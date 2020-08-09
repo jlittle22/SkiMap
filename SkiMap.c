@@ -95,6 +95,12 @@ static void loadTrails(SkiMap obj, char* edata) {
 	readStringFile(obj, edata, loadTrail);
 }
 
+/* purpose: Initialize a new SkiMap object
+ * name: Character array representing the object's name
+ * vdata: char* containing all vertex data
+ * edata: char* containing all edge data
+ * returns: pointer to a SkiMap object
+ */
 SkiMap SkiMap_new(char name[], char* vdata, char* edata) {
 	SkiMap obj = malloc(SKI_MAP_SIZE);
 	obj->allVertices = List_new();
@@ -105,12 +111,14 @@ SkiMap SkiMap_new(char name[], char* vdata, char* edata) {
     return obj;
 }
 
+/* Free allocated resources for a SkiMap object */
 void SkiMap_free(SkiMap obj) {
 	assert(obj);
 	freeAllVertices(obj->allVertices);
 	List_partialFree(obj->startPoints);
 	free(obj);
 }
+/* Free SkiMap vertex objects */
 static void freeAllVertices(List remove) {
 	Node* current = remove->list->front; 
 	Node* temp = NULL;
@@ -124,6 +132,11 @@ static void freeAllVertices(List remove) {
 	free(remove);
 }
 
+/* purpose: Process the user's input and calculate a path
+ * obj: SkiMap object within which to calculate a path
+ * userPreferences: A byte representing the flags a user can select
+ * returns: a stringified char array representing the path
+ */
 char* SkiMap_processInput(SkiMap obj, uint8_t userPreferences) {
 	char* path;
 	if (userPreferences == 128 || userPreferences == 255) {
@@ -136,6 +149,7 @@ char* SkiMap_processInput(SkiMap obj, uint8_t userPreferences) {
 	return path;
 }
 
+/* Searches the SkiMap for a vertex with the name stored by the name char array */
 Vertex SkiMap_searchVertex(SkiMap obj, char name[]) {
 	assert(obj);
 	int size = List_numItems(obj->allVertices);
@@ -150,6 +164,7 @@ Vertex SkiMap_searchVertex(SkiMap obj, char name[]) {
 	return NULL;
 }
 
+/* Produces a totally random through the SkiMap */
 char* SkiMap_randomPathDown(SkiMap obj) {
 	unsigned numStarts = (unsigned)List_numItems(obj->startPoints);
 	Vertex start = (Vertex)List_getItem(obj->startPoints, randomNum(numStarts))->data;
@@ -160,7 +175,7 @@ char* SkiMap_randomPathDown(SkiMap obj) {
 	return pathString;
 }
 
-
+/* Recursive helper function to complete a DFS production of a random path down the mountain */
 static void randomPathDown_Helper(Vertex current, bool first, List path) {
 	if (!first) {
 		Vertex_setDiscovered(current, true);
@@ -185,6 +200,7 @@ static void randomPathDown_Helper(Vertex current, bool first, List path) {
 	Vertex_setDiscovered(current, false);
 }
 
+/* Brief unitility function used by randomPathDown_helper to track if all vertex edges have been visited */
 static bool visitedAll(int arr[], int size) {
 	for (int i = 0; i < size; i++) {
 		if (arr[i] == 0) {
@@ -194,6 +210,7 @@ static bool visitedAll(int arr[], int size) {
 	return true;
 } 
 
+/* Loads the char array's values into the SkiMap obj's mtnName field */
 static void assignMtnName(SkiMap obj, char array[]) {
 	assert(obj);
 	int i;
@@ -208,19 +225,22 @@ static void assignMtnName(SkiMap obj, char array[]) {
 	obj->mtnName[i] = '\0';
 }
 
+/* Produces a random integer between 0 and upperBound */
 static unsigned randomNum(unsigned upperBound) {
 	return (rand() % upperBound); 
 }
 
+/* Produces a random float of a certain magnitude (either positive or negative) */
 static float randomFloat(float magnitude) {
-	bool negative = (rand()%2);
-	float num = ((float)rand()/(float)RAND_MAX)*magnitude;
+	bool negative = rand() % 2;
+	float num = ((float)rand() / (float)RAND_MAX) * magnitude;
 	if (negative) {
 		num *= -1.0;
 	}
 	return num;
 }
 
+/* Accepts and list of Vertices representing the complete path and produces a string output */
 char* SkiMap_stringifyPath(List pathList) {
 	int numItems = List_numItems(pathList);
 	char* path = (char*)malloc(VERT_NAME_CHAR_COUNT * numItems);
@@ -236,6 +256,7 @@ char* SkiMap_stringifyPath(List pathList) {
 	return path;
 }
 
+/* Scans the list of vertices and finds the optimal path from the previous BF run */
 List SkiMap_checkBFResults(SkiMap obj) {
 	unsigned numVerts = List_numItems(obj->startPoints);
 	float min = 16.0;
@@ -268,14 +289,18 @@ List SkiMap_checkBFResults(SkiMap obj) {
 	return bestPath;
 }
 
+/* Runs the modified Bellman-Ford algorithm on the SkiMap and stores results in the vertices */
 void SkiMap_bellmanFord(SkiMap obj, Vertex source, uint8_t userPreferences) {
+	// initialize the source's data
 	Vertex_setDistance(source, 0);
 	source->toParent = (void*)0x0;
 	unsigned numVerts = (unsigned)List_numItems(obj->allVertices);
 	for (unsigned k = 0; k < numVerts; k++) {
+		// mark source vertex undiscovered once we've relaxed edges once
 		if (k == 1) {
 			Vertex_setDistance(source, INFINITE_DIST);
 		}
+        // for each vertex, for each edge, relax the edge.
 		for (unsigned i = 0; i < numVerts; i++) {
 			Vertex test = (Vertex)(List_getItem(obj->allVertices, i)->data);
 			unsigned numEdges = (unsigned)List_numItems(test->edges);
@@ -287,6 +312,7 @@ void SkiMap_bellmanFord(SkiMap obj, Vertex source, uint8_t userPreferences) {
 	}
 }
 
+/* Relaxes an edge */
 void SkiMap_relaxEdge(Vertex source, Edge target, uint8_t userPreferences) {
 	if (Vertex_getDistance(source) == INFINITE_DIST) {
 		return;
@@ -296,16 +322,19 @@ void SkiMap_relaxEdge(Vertex source, Edge target, uint8_t userPreferences) {
 	uint8_t newPathNumEdges = Vertex_getNumEdgesInPath(source) + 1;
 	if (newPathWeight < Vertex_getDistance(dest)) {
 		dest->toParent = target;
-		Vertex_updateAverage(dest, newPathWeight+randomFloat(BELLMAN_ERROR), newPathNumEdges);
+		Vertex_updateAverage(dest, newPathWeight + randomFloat(BELLMAN_ERROR), newPathNumEdges);
 	}
 }
 
+/* Calculates an edges score based on user preferences - the lower the score the better */
 float SkiMap_evaluateEdge(Edge target, uint8_t userPreferences) {
 	assert(target);
 	float score = SIZE_OF_WORD_F;
 	for (unsigned i = 0; i < SIZE_OF_WORD; i++) {
+		// for each matching preference, reduce score by 1
 		if (matchingFlags(i, userPreferences, target->diffRating) == true) {
 			score = score - 1.0;
+		// for each trail that is over the highest user-requested difficulty, add 0.5 plus the maximum error
 		} else if (matchingFlags(i, target->diffRating, defineNegationZone(userPreferences))) {
 			score = score + 0.5 + BELLMAN_ERROR;
 		}
@@ -314,6 +343,7 @@ float SkiMap_evaluateEdge(Edge target, uint8_t userPreferences) {
 	return score;
 }
 
+/* Defines the range of bits which represent all trails with higher difficulty than the user requested */
 static uint8_t defineNegationZone(uint8_t userPreferences) {
 	uint8_t diffMask = ONE_BIT_AT((DOUBLE+1))-1;
 	int max = -1;
@@ -327,10 +357,12 @@ static uint8_t defineNegationZone(uint8_t userPreferences) {
 	return diffMask;
 }
 
+/* Checks whether the i-th flags in two bit fields are both on */
 static bool matchingFlags(int i, uint8_t field1, uint8_t field2) {
 	return (checkFlag(field1, i) == true && checkFlag(field2, i) == true); 
 }
 
+/* Checks if the flag at bitLocation is on */
 static bool checkFlag(uint8_t word, unsigned bitLocation) {
 	checkRange("ERROR: at CheckFlag.. bitLocation out of range.", bitLocation, (unsigned)(SIZE_OF_WORD-1));
 	word = word >> bitLocation;
