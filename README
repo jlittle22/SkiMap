@@ -91,18 +91,18 @@ Linked Lists (LinkedList.h/LinkedList.c) *NEEDS WORK:
 	in the object. *Sadly, this was the first object I made so I have some 
 	unnecessary structs. You get the idea though. I'll redo it at some point.
 	
-	typedef struct Node{
+	typedef struct Node {
 		void * data; 
 		Node * next; 
 	} Node;
 	
-	struct LinkedList{
+	struct LinkedList {
 	    Node * front;
 	};
 	
 	typedef struct LinkedList* LinkedList; 
 	
-	struct LinkedListClass{
+	struct LinkedListClass {
 		LinkedList list;
 		int numElems; 
 	};
@@ -114,7 +114,7 @@ Ski Maps (SkiMap.h/SkiMap.c) *NEEDS WORK:
 	SkiMap object will be what searching algorithms will traverse through. 
 	The SkiMap object is the graph.
 
-	struct SkiMap{
+	struct SkiMap {
 		char mtnName[MTN_NAME_SIZE];
 		List allVertices; 
 		List startPoints;
